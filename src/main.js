@@ -1,9 +1,20 @@
 var game = new Game();
 
 var gameBoard = document.querySelector('#game-board');
-var nextPlayerIcon = document.querySelector('h1 img')
+var nextPlayerIcon = document.querySelector('h1 img');
 
 gameBoard.addEventListener('click', doIfTile);
+window.onload = clearBoard;
+
+function clearBoard(){
+  var tiles = document.querySelectorAll('.tile');
+  tiles.forEach(function insertEmptyIcon(tile) {
+    tile.src = './assets/empty.png';
+    tile.classList.add('empty');
+    tile.classList.remove('ruby');
+    tile.classList.remove('js');
+  });
+}
 
 function doIfTile(event) {
   var tile = event.target.closest('.tile')
@@ -22,7 +33,8 @@ function checkIsEmptyThenFill(tile) {
 
 function fill(tile){
   tile.src = game.currentPlayer.icon;
-  tile.classList.toggle(game.currentPlayer.colorClass);
+  tile.classList.add(game.currentPlayer.colorClass);
+  tile.classList.remove('empty')
   game.switchCurrentPlayer();
-  nextPlayerIcon.src = game.currentPlayer.icon
+  nextPlayerIcon.src = game.currentPlayer.icon;
 }
