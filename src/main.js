@@ -1,6 +1,7 @@
 var game = new Game();
 
 var gameBoard = document.querySelector('#game-board');
+var nextPlayerIcon = document.querySelector('h1 img')
 
 gameBoard.addEventListener('click', doIfTile);
 
@@ -16,11 +17,12 @@ function checkIsEmptyThenFill(tile) {
   var column = 'lcr'.indexOf(tile.id[1]);
   if (game.tileIsEmpty(row, column)) {
     fill(tile);
-    game.switchCurrentPlayer();
   }
 }
 
 function fill(tile){
   tile.src = game.currentPlayer.icon;
   tile.classList.toggle(game.currentPlayer.colorClass);
+  game.switchCurrentPlayer();
+  nextPlayerIcon.src = game.currentPlayer.icon
 }
