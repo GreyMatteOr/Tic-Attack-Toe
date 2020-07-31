@@ -1,1 +1,9 @@
-console.log('Game is Loaded')
+class Game{
+  constructor(){
+
+  }
+
+  echo(tileID){
+    console.log(tileID);
+  }
+}
