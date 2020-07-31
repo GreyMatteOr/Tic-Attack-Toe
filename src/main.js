@@ -7,6 +7,6 @@ gameBoard.addEventListener('click', checkTile)
 function checkTile(event){
   var tile = event.target.closest('.tile')
   if (tile) {
-    game.echo(tile.id)
+    game.clickTile(tile.id)
   }
 }

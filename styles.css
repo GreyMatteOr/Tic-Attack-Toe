@@ -158,14 +158,14 @@ h1 img{
 }
 
 .empty{
-  transition: opacity .6s;
+  transition: all .6s;
+  width: 90%;
   opacity: .25;
 }
 
 .empty:hover{
-  opacity: .5;
-  border-color: yellow;
-  border-style: double;
+  width: 100%;
+  opacity: .6;
 }
 
 .js{
