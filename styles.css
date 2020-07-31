@@ -30,13 +30,13 @@ h2{
   display: grid;
   grid-template-columns: repeat(3, minmax(5em, 1fr));
   grid-template-rows: repeat(3, minmax(5em, 1fr));
-  grid-gap: .5em;
-  padding: .5em;
+  grid-gap: 4%;
+  padding: 4%;
 }
 
-#game-board img{
+.symbol{
   width: 100%;
-  height: 100%;
+  height: auto;
   border-color: orange;
   border-style: solid;
 }
@@ -69,4 +69,9 @@ h2{
   position: absolute;
   width: 100%;
   height: 100%;
+  min-width: 17.5em;
+  min-height: 17.5em;
+  border-color: red;
+  border-style: double;
+  padding-bottom: 5%;
 }
