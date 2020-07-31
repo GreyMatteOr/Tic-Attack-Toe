@@ -5,22 +5,22 @@ class Game{
       ['','',''],
       ['','','']
     ];
-    this.player1 = new Player('x', './assets/ruby.png', 'Ruby-Player', '#9f7451');
-    this.player2 = new Player('o', './assets/js-icon.webp', 'JS-Player', '#748540');
+    this.player1 = new Player('x', './assets/ruby.png', 'Ruby-Player', 'ruby');
+    this.player2 = new Player('o', './assets/js-icon.webp', 'JS-Player', 'js');
     this.currentPlayer = this.player1;
-    this.player1.otherPlayer = this.player2;
-    this.player2.otherPlayer = this.player1;
+    this.player1.opponent = this.player2;
+    this.player2.opponent = this.player1;
   }
 
-  clickTile(tileID){
-    var row = 'tmb'.indexOf(tileID[0]);
-    var column = 'lcr'.indexOf(tileID[1]);
-    console.log(`${row} ${column}`);
-    if (this.board[row][column] === '') {
-      console.log(`claimed with an ${this.currentPlayer.symbol}`);
+  tileIsEmpty(row, column){
+    if (this.board[row][column] === ''){
       this.board[row][column] = this.currentPlayer.symbol;
-      this.currentPlayer = this.currentPlayer.otherPlayer;
+      return true;
     }
-    console.log(this.board)
+    return false;
+  }
+
+  switchCurrentPlayer(){
+    this.currentPlayer = this.currentPlayer.opponent;
   }
 }
