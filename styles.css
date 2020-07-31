@@ -1,4 +1,189 @@
+@font-face {
+    font-family: "Fight";
+    src: url("./assets/fight woff font/fightt__-webfont.woff") format('woff');
+}
+
+@font-face {
+    font-family: "Noise Machine";
+    src: url("./assets/JS woff font/noisemachine-10je-webfont.woff") format('woff');
+}
+
+@font-face {
+    font-family: "Ruby";
+    src: url("./assets/ruby woff fonts/omega_ruby-webfont.woff") format('woff');
+}
+
 html, body, h1, h2, h3, h4, h5, h6, p {
   margin: 0;
   padding: 0;
+}
+
+html{
+  min-height: 100%;
+}
+
+body{
+  position: absolute;
+  height: 100%;
+  background-color: #444;
+}
+
+main{
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  grid-row: 100%;
+  height: 100%;
+}
+
+#section-left,
+#section-right{
+  padding: 4em 2em;
+  height: 100%;
+}
+
+#section-left img,
+#section-right img{
+  width: 3em;
+  height: auto;
+  border-radius: 50%;
+}
+
+#section-left img{
+  background-color: #a41b0e;
+}
+
+#section-right img{
+  background-color: #5d7859;
+}
+
+#section-left{
+  background: url('assets/ruby-player-bg.jpg')  #660500;
+  background-size: 100% 100%;
+  font-family: 'Ruby';
+  font-size: 22px;
+  letter-spacing: 1pt;
+  color: #fdd;
+  border-color: #aa9082;
+  border-style: solid;
+  box-shadow: 10px 0 30px 6px rgba(60,0,0,0.85);
+  position: relative;
+}
+
+#section-left .div-player-score{
+  background-color:rgb(255, 144, 130, 0.40);
+
+}
+
+#section-left h2{
+  text-shadow: black 0.1em 0.1em 0.2em;
+}
+
+#section-right{
+  background: url('assets/js-player-bg.jpg') #4a943e;
+  background-size: 100% 100%;
+  font-family: 'Noise Machine';
+  font-size: 22px;
+  letter-spacing: 2pt;
+  color: #81cf08;
+  border-color: yellow;
+  border-style: solid;
+  box-shadow: -10px 0 30px 6px rgba(0,60,0,0.85);
+}
+
+#section-right .div-player-score{
+  background-color:rgb(70, 72, 62, 0.40);
+}
+
+#section-right h2{
+    text-shadow: black 0.1em 0.1em 0.2em;
+}
+
+.div-player-score{
+  text-align: center;
+  justify-content: center;
+  min-width: 9em;
+  border-radius: 9%;
+  padding: .5em;
+}
+
+#section-middle{
+  padding: 2em;
+  text-align: center;
+  height: 100%;
+  min-height: 100%;
+  min-width: 17.5em;
+  margin: 1.5em;
+  background: radial-gradient(circle, rgba(185,161,87,1) 25%, rgba(162,145,92,1) 60%, rgba(167,152,106,1) 89%);
+}
+
+h1{
+  font-family: 'Fight';
+  letter-spacing: 1px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-shadow: black 0.1em 0.1em 0.2em;
+  background-color:rgb(70, 72, 62, 0.40);
+  border-radius: 3em;
+  padding: .5em 0;
+}
+
+h1 img{
+  width: 2em;
+  margin-left: 10px;
+  height: auto;
+  background-color: #cccc00;
+  border-radius: 50%;
+}
+
+#game-board{
+  margin-top: 2em;
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(5em, 1fr));
+  grid-template-rows: repeat(3, minmax(5em, 1fr));
+  grid-gap: 4%;
+  padding: 4%;
+}
+
+.symbol{
+  width: 100%;
+  height: auto;
+  border-color: orange;
+  border-style: solid;
+}
+
+.top{
+  grid-row: 1;
+}
+
+.middle{
+  grid-row: 2;
+}
+
+.bottom{
+  grid-row: 3;
+}
+
+.left{
+  grid-column: 1;
+}
+
+.center{
+  grid-column: 2;
+}
+
+.right{
+  grid-column: 3;
+}
+
+#ttt-grid{
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  min-width: 17.5em;
+  min-height: 17.5em;
+  border-color: red;
+  border-style: double;
+  padding-bottom: 5%;
 }
