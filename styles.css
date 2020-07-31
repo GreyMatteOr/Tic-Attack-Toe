@@ -63,10 +63,10 @@ main{
   font-size: 22px;
   letter-spacing: 1pt;
   color: #fdd;
-  border-color: #aa9082;
+  border-color: #ee9082;
   border-style: solid;
   box-shadow: 10px 0 30px 6px rgba(60,0,0,0.85);
-  position: relative;
+  /* position: relative; */
 }
 
 #section-left .div-player-score{
@@ -75,7 +75,7 @@ main{
 }
 
 #section-left h2{
-  text-shadow: black 0.1em 0.1em 0.2em;
+  text-shadow: black 0.1em 0.1em .1em;
 }
 
 #section-right{
@@ -122,7 +122,7 @@ h1{
   display: flex;
   align-items: center;
   justify-content: center;
-  text-shadow: black 0.1em 0.1em 0.2em;
+  text-shadow: black 0.1em 0.1em 0.3em;
   background-color:rgb(70, 72, 62, 0.40);
   border-radius: 3em;
   padding: .5em 0;
@@ -130,7 +130,6 @@ h1{
 
 h1 img{
   width: 2em;
-  margin-left: 10px;
   height: auto;
   background-color: #cccc00;
   border-radius: 50%;
@@ -142,15 +141,39 @@ h1 img{
   display: grid;
   grid-template-columns: repeat(3, minmax(5em, 1fr));
   grid-template-rows: repeat(3, minmax(5em, 1fr));
-  grid-gap: 4%;
-  padding: 4%;
+  grid-gap: 1em;
+  align-items: center;
+  justify-content: center;
+  /* background: linear-gradient(90deg, rgba(192,86,70,1) 0%, rgba(127,118,85,1) 50%, rgba(100,154,34,1) 100%); */
 }
 
-.symbol{
+.tile{
   width: 100%;
   height: auto;
-  border-color: orange;
-  border-style: solid;
+  border-radius: 50%;
+  position: relative;
+  z-index: 2;
+  /* border-color: orange; */
+  /* border-style: solid; */
+}
+
+.empty{
+  transition: all .6s;
+  width: 90%;
+  opacity: .25;
+}
+
+.empty:hover{
+  width: 100%;
+  opacity: .6;
+}
+
+.js{
+  background: radial-gradient(rgba(192,86,70,1) 0%, rgba(127,118,85,1) 50%, rgba(100,154,34,1) 100%);
+}
+
+.ruby{
+    background: radial-gradient(rgba(100,154,34,1) 0%, rgba(127,118,85,1) 50%, rgba(192,86,70,1) 100%);
 }
 
 .top{
@@ -179,11 +202,13 @@ h1 img{
 
 #ttt-grid{
   position: absolute;
+  z-index: 1;
   width: 100%;
   height: 100%;
-  min-width: 17.5em;
-  min-height: 17.5em;
-  border-color: red;
-  border-style: double;
-  padding-bottom: 5%;
+  min-width: 17.5rem;
+  min-height: 17.5rem;
+  font-family: 'Verdana';
+  box-shadow: black 2px 1px 15px 2px;
+  /* border-color: red; */
+  /* border-style: double; */
 }
