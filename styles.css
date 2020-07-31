@@ -2,3 +2,71 @@ html, body, h1, h2, h3, h4, h5, h6, p {
   margin: 0;
   padding: 0;
 }
+
+body{
+  background-color: grey;
+}
+
+main{
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+}
+
+#section-left,
+#section-right{
+  padding: 4em 2em;
+}
+
+h2{
+  min-width: 6em;
+}
+
+#section-middle{
+  padding: 2em;
+}
+
+#game-board{
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(5em, 1fr));
+  grid-template-rows: repeat(3, minmax(5em, 1fr));
+  grid-gap: .5em;
+  padding: .5em;
+}
+
+#game-board img{
+  width: 100%;
+  height: 100%;
+  border-color: orange;
+  border-style: solid;
+}
+
+.top{
+  grid-row: 1;
+}
+
+.middle{
+  grid-row: 2;
+}
+
+.bottom{
+  grid-row: 3;
+}
+
+.left{
+  grid-column: 1;
+}
+
+.center{
+  grid-column: 2;
+}
+
+.right{
+  grid-column: 3;
+}
+
+#ttt-grid{
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
