@@ -34,7 +34,7 @@ function checkIsEmptyThenFill(tile) {
 function fill(tile){
   tile.src = game.currentPlayer.icon;
   tile.classList.add(game.currentPlayer.colorClass);
-  tile.classList.remove('empty')
+  tile.classList.remove('empty');
   game.switchCurrentPlayer();
   nextPlayerIcon.src = game.currentPlayer.icon;
 }

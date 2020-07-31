@@ -148,13 +148,22 @@ h1 img{
 }
 
 .tile{
-  width: 100%;
+  width: 95%;
   height: auto;
+  min-width: 5em;
+  min-height: 5em;
   border-radius: 50%;
+  margin: 0 3%;
   position: relative;
   z-index: 2;
   /* border-color: orange; */
   /* border-style: solid; */
+}
+
+.invisible{
+  width: 100%;
+  height: 100%;
+  opacity: 0;
 }
 
 .empty{
