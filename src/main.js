@@ -13,16 +13,21 @@ var game;
 var gameBoard = document.querySelector('#game-board');
 var nextPlayerIcon = document.querySelector('h1 img');
 var playerNames = document.querySelectorAll('.div-player-score h2');
+var forfeitButton = document.querySelector('.forfeit');
+var clearButton = document.querySelector('.clear')
 var kablam = document.querySelector('#kablam');
 var exclaim = document.querySelector('#exclaim-win');
-var overlay = document.querySelector('.overlay')
+var overlay = document.querySelector('.overlay');
 
-gameBoard.addEventListener('click', ifTileAttemptTurn);
 window.onload = function doOnLoad(){
   players = JSON.parse( localStorage.getItem('players') ) || players;
   clearBoard();
   updatePlayerWins();
 }
+window.beforeunload = forfeit;
+gameBoard.addEventListener('click', ifTileAttemptTurn);
+forfeitButton.addEventListener('click', forfeit);
+
 
 function clearBoard(){
   game = new Game(players['Ruby Player'], players['JS Player']);
@@ -33,6 +38,7 @@ function clearBoard(){
     tile.classList.add('empty');
     tile.classList.remove('js-bg', 'ruby-bg');
   });
+  setActiveButtons();
 }
 
 function ifTileAttemptTurn(event) {
@@ -67,13 +73,21 @@ function checkGameOver( coordinates ){
     window.setTimeout(tieAnimationReset, 1200);
   } else {
     getNextPlayer();
+    setActiveButtons();
   }
 }
 
 function addPlayerWin(){
+  forfeitButton.disabled = true;
   game.currentPlayer.wins++;
   players[game.currentPlayer.name] = game.currentPlayer.importantData();
   localStorage.setItem('players', JSON.stringify(players));
+}
+
+function forfeit(){
+  game.switchCurrentPlayer();
+  addPlayerWin();
+  clearBoard();
 }
 
 function winAnimation(){
@@ -103,6 +117,7 @@ function winAnimationReset(){
 }
 
 function tieAnimation(){
+  forfeitButton.disabled = true;
   exclaim.innerText = `tie.`
   exclaim.classList.remove('js-bg', 'ruby-bg', 'js-font', 'ruby-font')
   exclaim.classList.add('show-exclaim', 'draw');
@@ -116,6 +131,16 @@ function tieAnimationReset(){
 function getNextPlayer(){
   game.switchCurrentPlayer();
   nextPlayerIcon.src = game.currentPlayer.icon;
+}
+
+function setActiveButtons(){
+  if(game.isEmpty()){
+    forfeitButton.disabled = true;
+    clearButton.disabled = false;
+  } else {
+    forfeitButton.disabled = false;
+    clearButton.disabled = true;
+  }
 }
 
 function updatePlayerWins(){

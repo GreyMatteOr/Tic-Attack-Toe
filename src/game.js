@@ -65,6 +65,10 @@ class Game{
     return 1 + this.numInARow( direction(xy), direction );
   };
 
+  isEmpty(){
+    return this.turns === 0;
+  }
+
   right(xy){
     return [ xy[0], (xy[1] + 1) ];
   };
