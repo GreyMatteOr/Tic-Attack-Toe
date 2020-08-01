@@ -5,8 +5,8 @@ class Game{
       ['','',''],
       ['','','']
     ];
-    this.player1 = new Player('x', './assets/ruby.png', 'Ruby-Player', 'ruby');
-    this.player2 = new Player('o', './assets/js-icon.webp', 'JS-Player', 'js');
+    this.player1 = new Player('x', './assets/ruby.png', 'Ruby Player', 'ruby');
+    this.player2 = new Player('o', './assets/js-icon.webp', 'JS Player', 'js');
     this.currentPlayer = this.randomPlayer([this.player1, this.player2]);
     this.player1.opponent = this.player2;
     this.player2.opponent = this.player1;
@@ -46,10 +46,8 @@ class Game{
 
   checkForWins(coordinates){
     if(this.xInARowAt(3, coordinates)){
-      console.log('yup!');
       return true;
     } else {
-      console.log('nope');
       return false;
 
     }
