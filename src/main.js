@@ -2,9 +2,13 @@ var game = new Game();
 
 var gameBoard = document.querySelector('#game-board');
 var nextPlayerIcon = document.querySelector('h1 img');
+var playerNames = document.querySelectorAll('.div-player-score h2');
 
 gameBoard.addEventListener('click', doIfTile);
-window.onload = clearBoard;
+window.onload = function doOnLoad(){
+  clearBoard();
+  updatePlayerWins();
+}
 
 function clearBoard(){
   game.newGame();
@@ -28,19 +32,26 @@ function doIfTile(event) {
 function checkIsEmptyThenFill(tile) {
   var row = 'tmb'.indexOf(tile.id[0]);
   var col = 'lcr'.indexOf(tile.id[1]);
-  if (game.tileIsEmpty([row, col])) {
-    fill(tile, [row, col]);
+  if ( game.tileIsEmpty( [row, col] ) ) {
+    fill(tile);
+    checkGameOver( [row, col] );
   }
 }
 
-function fill(tile, coordinates){
+function fill(tile){
   tile.src = game.currentPlayer.icon;
   tile.classList.add(game.currentPlayer.colorClass);
   tile.classList.remove('empty');
+}
+
+function checkGameOver( coordinates ){
   if( game.checkForWins(coordinates) ) {
-    window.setTimeout(clearBoard, 1200)
+    window.setTimeout(function win(){
+      clearBoard();
+      updatePlayerWins();
+    }, 1200);
   } else if (game.turns >= 9) {
-    window.setTimeout(clearBoard, 1200)
+    window.setTimeout(clearBoard, 1200);
   } else {
     getNextPlayer();
   }
@@ -49,4 +60,9 @@ function fill(tile, coordinates){
 function getNextPlayer(){
   game.switchCurrentPlayer();
   nextPlayerIcon.src = game.currentPlayer.icon;
+}
+
+function updatePlayerWins(){
+  playerNames[0].innerText = `${game.player1.name} wins: ${game.player1.wins}`;
+  playerNames[1].innerText = `${game.player2.name} wins: ${game.player2.wins}`;
 }
