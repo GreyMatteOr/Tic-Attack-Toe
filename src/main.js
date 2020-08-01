@@ -25,7 +25,7 @@ function clearBoard(){
 }
 
 function doIfTile(event) {
-  var tile = event.target.closest('.tile')
+  var tile = event.target.closest('.tile');
   if (tile) {
     checkIsEmptyThenFill(tile);
   }
