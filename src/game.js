@@ -1,5 +1,5 @@
 class Game{
-  constructor(consecucutiveToWin){
+  constructor(inARowToWin){
     this.board = [
       ['','',''],
       ['','',''],
@@ -10,19 +10,18 @@ class Game{
     this.currentPlayer = this.randomPlayer([this.player1, this.player2]);
     this.player1.opponent = this.player2;
     this.player2.opponent = this.player1;
-    this.consecucutiveToWin = consecucutiveToWin || 3;
+    this.inARowToWin = inARowToWin || 3;
     this.directions = { right, downRight, down, downLeft };
     this.turns = 0;
   }
 
   newGame(){
-    this.currentPlayer.wins++;
     this.board = [
       ['','',''],
       ['','',''],
       ['','','']
     ];
-    this.currentPlayer = this.randomPlayer([this.player1, this.player2]);
+    this.currentPlayer = this.randomPlayer( [this.player1, this.player2] );
     this.turns = 0;
   }
 
@@ -45,48 +44,38 @@ class Game{
   }
 
   checkForWins(coordinates){
-    if(this.xInARowAt(3, coordinates)){
-      return true;
-    } else {
-      return false;
-
-    }
+    var horizontal = this.xInARowAt(this.inARowToWin, [ coordinates[0], 0 ], 'right');
+    var vertical = this.xInARowAt(this.inARowToWin, [ 0, coordinates[1] ], 'down');
+    var diagonalRight = this.xInARowAt(this.inARowToWin, [ 0, 0 ], 'downRight');
+    var diagonalLeft = this.xInARowAt(this.inARowToWin, [ 0, this.board[0].length - 1 ], 'downLeft');
+    return horizontal || vertical || diagonalRight || diagonalLeft;
   }
 
   xInARowAt(x, coordinates, direction){
     if( x === 0 ) {
       return true;
     }
-
     if( this.board[coordinates[0]] === undefined ||
         this.board[coordinates[0]][coordinates[1]] === undefined ||
         this.board[coordinates[0]][coordinates[1]] !== this.currentPlayer.symbol ) {
       return false;
     }
-
-    if (direction === undefined) {
-      return this.xInARowAt(3, [ coordinates[0], 0 ], 'right') ||
-             this.xInARowAt(3, [ 0, 0 ], 'downRight')  ||
-             this.xInARowAt(3, [ 0, coordinates[1] ], 'down') ||
-             this.xInARowAt(3, [ 0, this.board[0].length - 1 ], 'downLeft');
-    }
-
-    return this.xInARowAt(x-1, this.directions[direction](coordinates), direction);
+    return this.xInARowAt( (x - 1), this.directions[direction](coordinates), direction);
   };
 }
 
 function right(coordinates){
-  return [coordinates[0], coordinates[1] + 1];
+  return [ coordinates[0], (coordinates[1] + 1) ];
 };
 
 function downRight(coordinates){
-  return [coordinates[0] + 1, coordinates[1] + 1];
+  return [ (coordinates[0] + 1), (coordinates[1] + 1) ];
 }
 
 function down(coordinates){
-  return [coordinates[0] + 1, coordinates[1]];
+  return [ (coordinates[0] + 1), coordinates[1] ];
 }
 
 function downLeft(coordinates){
-  return [coordinates[0] + 1, coordinates[1] - 1]
+  return [ (coordinates[0] + 1), (coordinates[1] - 1) ]
 }

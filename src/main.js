@@ -50,18 +50,24 @@ function checkGameOver( coordinates ){
   if( game.checkForWins(coordinates) ) {
     kablam.classList.toggle('kablam');
     overlay.classList.toggle('hidden');
-    window.setTimeout(function win(){
-      clearBoard();
-      updatePlayerWins();
-      kablam.classList.toggle('kablam');
-      overlay.classList.toggle('hidden');
-    }, 1200);
+    window.setTimeout(waitThenDoWin, 1200);
   } else if (game.turns >= 9) {
-
-    window.setTimeout(clearBoard, 1200);
+    window.setTimeout(waitThenDoTie, 1200);
   } else {
     getNextPlayer();
   }
+}
+
+function waitThenDoWin(){
+  clearBoard();
+  updatePlayerWins();
+  kablam.classList.toggle('kablam');
+  overlay.classList.toggle('hidden')
+}
+
+function waitThenDoTie(){
+  
+  clearBoard();
 }
 
 function getNextPlayer(){
