@@ -5,13 +5,18 @@ class Game{
       ['','',''],
       ['','','']
     ];
-    this.player1 = new Player('x', './assets/ruby.png', 'Ruby Player', 'ruby');
-    this.player2 = new Player('o', './assets/js-icon.webp', 'JS Player', 'js');
+    this.player1 = new Player('x', './assets/ruby.png', 'Ruby Player', 'ruby-bg', 'ruby-font');
+    this.player2 = new Player('o', './assets/js-icon.webp', 'JS Player', 'js-bg', 'js-font');
     this.currentPlayer = this.randomPlayer([this.player1, this.player2]);
     this.player1.opponent = this.player2;
     this.player2.opponent = this.player1;
     this.inARowToWin = inARowToWin || 3;
-    this.directions = { right, downRight, down, downLeft };
+    this.directions = {
+      right: this.right,
+      downRight: this.downRight,
+      down: this.down,
+      downLeft: this.downLeft
+    };
     this.turns = 0;
   }
 
@@ -44,10 +49,10 @@ class Game{
   }
 
   checkForWins(coordinates){
-    var horizontal = this.xInARowAt(this.inARowToWin, [ coordinates[0], 0 ], 'right');
-    var vertical = this.xInARowAt(this.inARowToWin, [ 0, coordinates[1] ], 'down');
-    var diagonalRight = this.xInARowAt(this.inARowToWin, [ 0, 0 ], 'downRight');
-    var diagonalLeft = this.xInARowAt(this.inARowToWin, [ 0, this.board[0].length - 1 ], 'downLeft');
+    var horizontal = this.xInARowAt( this.inARowToWin, [ coordinates[0], 0 ], 'right' );
+    var vertical = this.xInARowAt( this.inARowToWin, [ 0, coordinates[1] ], 'down' );
+    var diagonalRight = this.xInARowAt( this.inARowToWin, [ 0, 0 ], 'downRight' );
+    var diagonalLeft = this.xInARowAt( this.inARowToWin, [ 0, this.board[0].length - 1 ], 'downLeft' );
     return horizontal || vertical || diagonalRight || diagonalLeft;
   }
 
@@ -62,20 +67,20 @@ class Game{
     }
     return this.xInARowAt( (x - 1), this.directions[direction](coordinates), direction);
   };
-}
 
-function right(coordinates){
-  return [ coordinates[0], (coordinates[1] + 1) ];
-};
+  right(coordinates){
+    return [ coordinates[0], (coordinates[1] + 1) ];
+  };
 
-function downRight(coordinates){
-  return [ (coordinates[0] + 1), (coordinates[1] + 1) ];
-}
+  downRight(coordinates){
+    return [ (coordinates[0] + 1), (coordinates[1] + 1) ];
+  };
 
-function down(coordinates){
-  return [ (coordinates[0] + 1), coordinates[1] ];
-}
+  down(coordinates){
+    return [ (coordinates[0] + 1), coordinates[1] ];
+  };
 
-function downLeft(coordinates){
-  return [ (coordinates[0] + 1), (coordinates[1] - 1) ]
+  downLeft(coordinates){
+    return [ (coordinates[0] + 1), (coordinates[1] - 1) ];
+  };
 }

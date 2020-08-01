@@ -3,7 +3,8 @@ var game = new Game();
 var gameBoard = document.querySelector('#game-board');
 var nextPlayerIcon = document.querySelector('h1 img');
 var playerNames = document.querySelectorAll('.div-player-score h2');
-var kablam = document.querySelector('.invisible');
+var kablam = document.querySelector('#kablam');
+var exclaim = document.querySelector('#exclaim-win');
 var overlay = document.querySelector('.overlay')
 
 gameBoard.addEventListener('click', doIfTile);
@@ -19,8 +20,8 @@ function clearBoard(){
   tiles.forEach(function insertEmptyIcon(tile) {
     tile.src = './assets/empty.png';
     tile.classList.add('empty');
-    tile.classList.remove('ruby');
-    tile.classList.remove('js');
+    tile.classList.remove('ruby-bg');
+    tile.classList.remove('js-bg');
   });
 }
 
@@ -48,25 +49,34 @@ function fill(tile){
 
 function checkGameOver( coordinates ){
   if( game.checkForWins(coordinates) ) {
-    kablam.classList.toggle('kablam');
-    overlay.classList.toggle('hidden');
-    window.setTimeout(waitThenDoWin, 1200);
+    game.currentPlayer.wins++;
+    kablam.classList.add('kablam');
+    overlay.classList.remove('hidden');
+    window.setTimeout(winAnimationStage1, 600);
+    window.setTimeout(winAnimationStage2, 1800);
   } else if (game.turns >= 9) {
-    window.setTimeout(waitThenDoTie, 1200);
+    window.setTimeout(tieAnimation, 1200);
   } else {
     getNextPlayer();
   }
 }
 
-function waitThenDoWin(){
-  clearBoard();
-  updatePlayerWins();
-  kablam.classList.toggle('kablam');
-  overlay.classList.toggle('hidden')
+function winAnimationStage1(){
+  exclaim.innerText = `${game.currentPlayer.name} wins!!`
+  exclaim.classList.add('exclaim');
+  exclaim.classList.add(game.currentPlayer.bgClass, game.currentPlayer.fontClass);
 }
 
-function waitThenDoTie(){
-  
+function winAnimationStage2(){
+  clearBoard();
+  updatePlayerWins();
+  kablam.classList.remove('kablam');
+  exclaim.classList.remove('exclaim', 'js-bg', 'ruby-bg', 'js-font', 'ruby-font');
+  overlay.classList.add('hidden');
+}
+
+function tieAnimation(){
+
   clearBoard();
 }
 
