@@ -3,7 +3,8 @@ var game = new Game();
 var gameBoard = document.querySelector('#game-board');
 var nextPlayerIcon = document.querySelector('h1 img');
 var playerNames = document.querySelectorAll('.div-player-score h2');
-var kablam = document.querySelector('.invisible');
+var kablam = document.querySelector('#kablam');
+var exclaim = document.querySelector('#exclaim-win');
 var overlay = document.querySelector('.overlay')
 
 gameBoard.addEventListener('click', doIfTile);
@@ -19,13 +20,13 @@ function clearBoard(){
   tiles.forEach(function insertEmptyIcon(tile) {
     tile.src = './assets/empty.png';
     tile.classList.add('empty');
-    tile.classList.remove('ruby');
-    tile.classList.remove('js');
+    tile.classList.remove('ruby-bg');
+    tile.classList.remove('js-bg');
   });
 }
 
 function doIfTile(event) {
-  var tile = event.target.closest('.tile')
+  var tile = event.target.closest('.tile');
   if (tile) {
     checkIsEmptyThenFill(tile);
   }
@@ -48,20 +49,48 @@ function fill(tile){
 
 function checkGameOver( coordinates ){
   if( game.checkForWins(coordinates) ) {
-    kablam.classList.toggle('kablam');
-    overlay.classList.toggle('hidden');
-    window.setTimeout(function win(){
-      clearBoard();
-      updatePlayerWins();
-      kablam.classList.toggle('kablam');
-      overlay.classList.toggle('hidden');
-    }, 1200);
+    game.currentPlayer.wins++;
+    kablam.classList.remove('fade'), kablam.classList.add('show-kablam');
+    overlay.classList.remove('hidden');
+    window.setTimeout(winAnimationStage1, 600);
+    window.setTimeout(winAnimationStage2, 1800);
+    window.setTimeout(winAnimationclear, 2400);
   } else if (game.turns >= 9) {
-
-    window.setTimeout(clearBoard, 1200);
+    tieAnimationStage1();
+    window.setTimeout(tieAnimationStage2, 1200);
   } else {
     getNextPlayer();
   }
+}
+
+function winAnimationStage1(){
+  exclaim.innerText = `${game.currentPlayer.name} wins!!`
+  exclaim.classList.add('show-exclaim');
+  exclaim.classList.add(game.currentPlayer.bgClass, game.currentPlayer.fontClass);
+}
+
+function winAnimationStage2(){
+  kablam.classList.add('fade');
+  // exclaim.classList.add('fade');
+  exclaim.classList.remove('show-exclaim', 'js-bg', 'ruby-bg', 'js-font', 'ruby-font');
+
+}
+
+function winAnimationclear(){
+  clearBoard();
+  updatePlayerWins();
+  kablam.classList.remove('show-kablam');
+  overlay.classList.add('hidden');
+}
+
+function tieAnimationStage1(){
+  exclaim.innerText = `DRAW`
+  exclaim.classList.add('show-exclaim', 'draw');
+}
+
+function tieAnimationStage2(){
+  exclaim.classList.remove('show-exclaim', 'draw');
+  clearBoard();
 }
 
 function getNextPlayer(){

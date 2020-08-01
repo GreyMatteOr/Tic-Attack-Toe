@@ -59,14 +59,11 @@ main{
 #section-left{
   background: url('assets/ruby-player-bg.jpg')  #660500;
   background-size: 100% 100%;
-  font-family: 'Ruby';
-  font-size: 22px;
-  letter-spacing: 1pt;
-  color: #fdd;
   border-color: #ee9082;
   border-style: solid;
   box-shadow: 10px 0 30px 6px rgba(60,0,0,0.85);
-  /* position: relative; */
+  font-size: 22px;
+  color: #fdd;
 }
 
 #section-left .div-player-score{
@@ -81,13 +78,10 @@ main{
 #section-right{
   background: url('assets/js-player-bg.jpg') #4a943e;
   background-size: 100% 100%;
-  font-family: 'Noise Machine';
-  font-size: 22px;
-  letter-spacing: 2pt;
-  color: #81cf08;
   border-color: yellow;
   border-style: solid;
   box-shadow: -10px 0 30px 6px rgba(0,60,0,0.85);
+  font-size: 22px;
 }
 
 #section-right .div-player-score{
@@ -102,30 +96,24 @@ main{
   text-align: center;
   justify-content: center;
   min-width: 9em;
-  border-radius: 9%;
+  border-radius: 2em;
   padding: .5em;
 }
 
 #section-middle{
   padding: 2em;
   text-align: center;
-  height: 100%;
-  min-height: 100%;
+  height: min-content;
   min-width: 17.5em;
   margin: 1.5em;
   background: radial-gradient(circle, rgba(185,161,87,1) 25%, rgba(162,145,92,1) 60%, rgba(167,152,106,1) 89%);
 }
 
 h1{
-  font-family: 'Fight';
-  letter-spacing: 1px;
   display: flex;
   align-items: center;
   justify-content: center;
-  text-shadow: black 0.1em 0.1em 0.3em;
   background-color:rgb(70, 72, 62, 0.40);
-  border-radius: 3em;
-  padding: .5em 0;
 }
 
 h1 img{
@@ -159,26 +147,56 @@ h1 img{
   /* border-style: solid; */
 }
 
-.invisible-placeholder{
+.placeholder{
   width: 100%;
   height: 100%;
   opacity: 0;
 }
 
 .invisible{
-  width: 40%;
-  height: 40%;
+  width: 100%;
+  height: 1em;
   opacity: 0;
   position: absolute;
   z-index: 0;
   transition: all .6s;
+  box-shadow: black 0 0 0 0;
+  text-shadow: black 0em 0em 0em;
+  color: white;
 }
 
 .kablam{
+  width: 40%;
+  height: 40%;
+}
+
+
+.show-kablam{
   width: 100%;
   height: 100%;
-  opacity: 100%;
+  opacity: 1;
   z-index: 4;
+}
+
+.fade{
+  opacity: 0;
+}
+
+.exclaim{
+  bottom: 15%;
+  font-size: 4em;
+  transition-property: color, box-shadow, text-shadow, opacity, z-index;
+  transition-duration: .6s;
+}
+
+.show-exclaim{
+  box-shadow: black 0px 0px 50px 15px;
+  text-shadow: black 1em 1em 0.3em;
+  opacity: 100%;
+  color: #cc413a;
+  z-index: 5;
+  transition-property: color, box-shadow, text-shadow, opacity;
+  transition-duration: 1s;
 }
 
 .overlay{
@@ -200,11 +218,11 @@ h1 img{
   opacity: .6;
 }
 
-.js{
+.js-bg{
   background: radial-gradient(rgba(192,86,70,1) 0%, rgba(127,118,85,1) 50%, rgba(100,154,34,1) 100%);
 }
 
-.ruby{
+.ruby-bg{
     background: radial-gradient(rgba(100,154,34,1) 0%, rgba(127,118,85,1) 50%, rgba(192,86,70,1) 100%);
 }
 
@@ -247,4 +265,28 @@ h1 img{
 
 .hidden{
   display: none;
+}
+
+.fight-font{
+  font-family: 'Fight';
+  letter-spacing: 1px;
+  text-shadow: black 0.1em 0.1em 0.3em;
+  border-radius: 1em;
+  padding: .5em 0;
+}
+
+.js-font{
+  font-family: 'Noise Machine';
+  letter-spacing: 2pt;
+  color: #81cf08;
+}
+
+.ruby-font{
+  font-family: 'Ruby';
+  letter-spacing: 1pt;
+}
+
+.draw{
+  background-color:rgb(70, 72, 62, 0.40);
+  color: white;
 }

@@ -9,7 +9,7 @@
   </head>
   <body>
     <main>
-      <section id='section-left'>
+      <section class='ruby-font' id='section-left'>
         <div class="div-player-score">
           <img src="./assets/ruby.png" alt="Player 1 symbol">
           <h2>RUBY player Wins</h2>
@@ -17,16 +17,17 @@
       </section>
 
       <section id='section-middle'>
-          <h1><img src="./assets/ruby.png" alt="current player symbol">'s turn</h1>
+          <h1 class='fight-font'><img src="./assets/ruby.png" alt="current player symbol">'s turn</h1>
           <div id="game-board">
-            <img class='invisible' src="./assets/kablam.png" alt="kablam!">
+            <img class='invisible kablam' id='kablam' src="./assets/kablam.png" alt="kablam!">
+            <h4 class='invisible fight-font exclaim' id='exclaim-win'></h4>
             <img class='overlay hidden' src=''>
             <img class='top left tile' id ='tl' src="" alt="Top Left tile"/>
             <img class='top center tile' id ='tc' src="" alt="Top Center tile"/>
             <img class='top right tile' id ='tr' src="" alt="Top Right tile"/>
             <img class='middle left tile' id ='ml' src="" alt="Middle Left tile"/>
             <img class='middle center tile' id ='mc' src="" alt="Middle Center tile"/>
-            <img class='middle center invisible-placeholder' src='./assets/ruby.png'>
+            <img class='middle center placeholder' src='./assets/ruby.png'>
             <img class='middle right tile' id ='mr' src="" alt="Middle Right tile"/>
             <img class='bottom left tile' id ='bl' src="" alt="Bottom Left tile"/>
             <img class='bottom center tile' id ='bc' src="" alt="Bottom Center tile"/>
@@ -35,7 +36,7 @@
           </div>
       </section>
 
-      <section id='section-right'>
+      <section class='js-font' id='section-right'>
         <div class="div-player-score">
           <img src="./assets/js-icon.webp" alt="Player2 symbol">
           <h2> JS Player Wins</h2>
