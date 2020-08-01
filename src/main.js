@@ -1,4 +1,14 @@
-var game = new Game();
+var players ={
+  'Ruby Player': {
+    name: 'Ruby Player',
+    wins: 0
+  },
+  'JS Player': {
+    name: 'JS Player',
+    wins: 0
+  }
+};
+var game;
 
 var gameBoard = document.querySelector('#game-board');
 var nextPlayerIcon = document.querySelector('h1 img');
@@ -7,32 +17,32 @@ var kablam = document.querySelector('#kablam');
 var exclaim = document.querySelector('#exclaim-win');
 var overlay = document.querySelector('.overlay')
 
-gameBoard.addEventListener('click', doIfTile);
+gameBoard.addEventListener('click', ifTileAttemptTurn);
 window.onload = function doOnLoad(){
+  players = JSON.parse( localStorage.getItem('players') ) || players;
   clearBoard();
   updatePlayerWins();
 }
 
 function clearBoard(){
-  game.newGame();
+  game = new Game(players['Ruby Player'], players['JS Player']);
   nextPlayerIcon.src = game.currentPlayer.icon;
   var tiles = document.querySelectorAll('.tile');
   tiles.forEach(function insertEmptyIcon(tile) {
     tile.src = './assets/empty.png';
     tile.classList.add('empty');
-    tile.classList.remove('ruby-bg');
-    tile.classList.remove('js-bg');
+    tile.classList.remove('js-bg', 'ruby-bg');
   });
 }
 
-function doIfTile(event) {
+function ifTileAttemptTurn(event) {
   var tile = event.target.closest('.tile');
   if (tile) {
-    checkIsEmptyThenFill(tile);
+    ifEmptyThenFill(tile);
   }
 }
 
-function checkIsEmptyThenFill(tile) {
+function ifEmptyThenFill(tile) {
   var row = 'tmb'.indexOf(tile.id[0]);
   var col = 'lcr'.indexOf(tile.id[1]);
   if ( game.tileIsEmpty( [row, col] ) ) {
@@ -49,15 +59,21 @@ function fill(tile){
 
 function checkGameOver( coordinates ){
   if( game.checkForWins(coordinates) ) {
-    game.currentPlayer.wins++;
+    addPlayerWin();
     winAnimation();
-    window.setTimeout(winAnimationclear, 2400);
+    window.setTimeout(winAnimationReset, 2400);
   } else if (game.turns >= 9) {
     tieAnimation();
-    window.setTimeout(tieAnimationClear, 1200);
+    window.setTimeout(tieAnimationReset, 1200);
   } else {
     getNextPlayer();
   }
+}
+
+function addPlayerWin(){
+  game.currentPlayer.wins++;
+  players[game.currentPlayer.name] = game.currentPlayer.importantData();
+  localStorage.setItem('players', JSON.stringify(players));
 }
 
 function winAnimation(){
@@ -76,12 +92,10 @@ function winAnimationStage1(){
 
 function winAnimationStage2(){
   kablam.classList.add('fade');
-  // exclaim.classList.add('fade');
   exclaim.classList.remove('show-exclaim');
-
 }
 
-function winAnimationclear(){
+function winAnimationReset(){
   clearBoard();
   updatePlayerWins();
   kablam.classList.remove('show-kablam');
@@ -94,7 +108,7 @@ function tieAnimation(){
   exclaim.classList.add('show-exclaim', 'draw');
 }
 
-function tieAnimationClear(){
+function tieAnimationReset(){
   exclaim.classList.remove('show-exclaim', 'draw');
   clearBoard();
 }

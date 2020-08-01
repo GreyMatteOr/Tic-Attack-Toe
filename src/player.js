@@ -7,4 +7,11 @@ class Player{
     this.fontClass = fontClass;
     this.wins = wins || 0;
   }
+
+  importantData(){
+    return {
+      name: this.name,
+      wins: this.wins
+    };
+  }
 };
