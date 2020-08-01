@@ -3,6 +3,8 @@ var game = new Game();
 var gameBoard = document.querySelector('#game-board');
 var nextPlayerIcon = document.querySelector('h1 img');
 var playerNames = document.querySelectorAll('.div-player-score h2');
+var kablam = document.querySelector('.invisible');
+var overlay = document.querySelector('.overlay')
 
 gameBoard.addEventListener('click', doIfTile);
 window.onload = function doOnLoad(){
@@ -46,11 +48,16 @@ function fill(tile){
 
 function checkGameOver( coordinates ){
   if( game.checkForWins(coordinates) ) {
+    kablam.classList.toggle('kablam');
+    overlay.classList.toggle('hidden');
     window.setTimeout(function win(){
       clearBoard();
       updatePlayerWins();
+      kablam.classList.toggle('kablam');
+      overlay.classList.toggle('hidden');
     }, 1200);
   } else if (game.turns >= 9) {
+
     window.setTimeout(clearBoard, 1200);
   } else {
     getNextPlayer();
