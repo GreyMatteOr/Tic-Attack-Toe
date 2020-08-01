@@ -46,10 +46,8 @@ class Game{
 
   checkForWins(coordinates){
     if(this.xInARowAt(3, coordinates)){
-      console.log('yup!');
       return true;
     } else {
-      console.log('nope');
       return false;
 
     }

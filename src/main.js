@@ -38,16 +38,11 @@ function fill(tile, coordinates){
   tile.classList.add(game.currentPlayer.colorClass);
   tile.classList.remove('empty');
   if( game.checkForWins(coordinates) ) {
-    console.log(`WOOHOO! ${game.currentPlayer.name} won!`)
-    clearBoard();
+    window.setTimeout(clearBoard, 1200)
   } else if (game.turns >= 9) {
-    console.log(`DRAW!`);
-    clearBoard();
+    window.setTimeout(clearBoard, 1200)
   } else {
     getNextPlayer();
-
-    console.log(`It's now ${game.currentPlayer.name}'s turn`)
-
   }
 }
 
