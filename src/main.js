@@ -43,8 +43,8 @@ forfeitButton.addEventListener('click', function forfeitAndShowAnimation() {
 clearButton.addEventListener('click', clearScores);
 p1ChangeName.addEventListener('click', toggleForm);
 p2ChangeName.addEventListener('click', toggleForm);
-p1nameInput.addEventListener('keydown', ifEnterAttemptGetName);
-p2nameInput.addEventListener('keydown', ifEnterAttemptGetName);
+p1nameInput.addEventListener('keydown', ifEnterAttemptChangeName);
+p2nameInput.addEventListener('keydown', ifEnterAttemptChangeName);
 p1Anon.addEventListener('click', becomeAnonymous);
 p2Anon.addEventListener('click', becomeAnonymous);
 
@@ -58,30 +58,56 @@ function toggleForm(event) {
   document.querySelector(`${ isLeft ? '#section-left' : '#section-right'} .anonymous`).classList.toggle('hidden');
 };
 
-function ifEnterAttemptGetName(event) {
-  var p1Name = game.p1.name, p2Name = game.p2.name;
-  var userText;
-  if( event.target.dataset.side === 'left' ) {
-    p1Name = p1nameInput.value, userText = p1nameInput.value;
-  } else {
-    p2Name = p2nameInput.value, userText = p2nameInput.value;
-  }
-  if (event.key === 'Enter' && isNotTooLong(userText) && notCurrentlyInUse(userText) ) {
-    startNewGame( p1Name, p2Name );
-    clearInputs();
+function ifEnterAttemptChangeName(event) {
+  if (event.key === 'Enter'){
+    var isLeft = ( event.target.dataset.side === 'left' );
+    attempChangeName(isLeft);
   }
 };
 
-function notCurrentlyInUse(name) {
-  return name.toLowerCase() !== game.p2.name && name.toLowerCase() !== game.p1.name;
+function attempChangeName(isLeft){
+  var userText = ( isLeft ) ? p1nameInput.value : p2nameInput.value;
+  if ( isNotTooLong(isLeft, userText ) && notCurrentlyInUse(isLeft, userText ) ) {
+    changeName(userText, isLeft);
+  }
+}
+
+function changeName(userText, isLeft){
+  var p1Name = (isLeft) ? userText : game.p1.name;
+  var p2Name = (isLeft) ? game.p2.name : userText;
+  startNewGame( p1Name, p2Name );
+  clearInputs();
+}
+
+function notCurrentlyInUse(isLeft, name) {
+  var currentlyInUse = name.toLowerCase() === game.p1.name ||
+                       name.toLowerCase() === game.p2.name;
+  if (currentlyInUse) {
+    flashWarning(isLeft, 'ALREADY EXISTS!');
+  }
+  return !currentlyInUse;
 };
 
-function isNotTooLong(name) {
-  if (name.length <= 20) {
-    flashTooLongWarning();
+function isNotTooLong(isLeft, name) {
+  var isTooLong = name.length > 20
+  if (isTooLong) {
+    flashWarning(isLeft, 'TOO LONG');
   }
-  return name.length <= 20;
+  return !isTooLong;
 };
+
+function flashWarning(isLeft, warningText){
+  var warningNode = document.querySelector(`${(isLeft) ? '#section-left' : '#section-right'} .invisible`)
+  warningNode.innerText = warningText;
+  warningNode.classList.add('show-exclaim', 'draw');
+  window.setTimeout( function warningReset(){
+    warningNode.classList.remove('show-exclaim', 'draw');
+  }, 1200);
+}
+
+function warningReset(){
+
+}
 
 function clearInputs() {
   p1nameInput.value = '';

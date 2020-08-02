@@ -35,6 +35,10 @@ main{
   height: 100%;
 }
 
+section{
+  position: relative;
+}
+
 #section-left,
 #section-right{
   padding: 4em 2em;
@@ -183,7 +187,7 @@ h1 img{
   height: 1em;
   opacity: 0;
   position: absolute;
-  z-index: 0;
+  z-index: -1;
   transition: all .6s;
   box-shadow: black 0 0 0 0;
   text-shadow: black 0em 0em 0em;
@@ -312,11 +316,15 @@ h1 img{
   width: 100%;
 }
 
-input{
+.input{
   width: 100%;
   text-align: center;
   margin-top: .5em;
+  padding: .25em 0;
+  position: relative;
+  border-radius: .5em;
 }
+
 
 .hidden{
   display: none;
