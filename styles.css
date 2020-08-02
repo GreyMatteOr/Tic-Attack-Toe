@@ -77,6 +77,15 @@ main{
   background-color: #a41b0e;
 }
 
+#section-left button:hover{
+  background-color: #bb1c0d;
+}
+
+#section-left button:disabled{
+  color: #2f1a18;
+  background-color: #550700;
+}
+
 #section-right{
   background: url('assets/js-player-bg.jpg') #4a943e;
   background-size: 100% 100%;
@@ -95,7 +104,16 @@ main{
 }
 
 #section-right button{
-  background-color: #5d7859;
+  background-color: #237f16;
+}
+
+#section-right button:hover{
+  background-color: #26aa14;
+}
+
+#section-right button:disabled{
+  color: #254022;
+  background-color: #0e6801;
 }
 
 .div-player-score{

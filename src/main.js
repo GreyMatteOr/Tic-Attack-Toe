@@ -14,9 +14,11 @@ var gameBoard = document.querySelector('#game-board');
 var nextPlayerIcon = document.querySelector('h1 img');
 var playerNames = document.querySelectorAll('.div-player-score h2');
 var forfeitButton = document.querySelector('.forfeit');
-var clearButton = document.querySelector('.clear')
-var p1ChangeName = document.querySelector('#section-left>button')
-var p2ChangeName = document.querySelector('#section-right>button')
+var clearButton = document.querySelector('.clear');
+var p1ChangeName = document.querySelector('#section-left>button');
+var p2ChangeName = document.querySelector('#section-right>button');
+var p1nameInput = document.querySelector('#section-left>input');
+var p2nameInput = document.querySelector('#section-right>input');
 var kablam = document.querySelector('#kablam');
 var exclaim = document.querySelector('#exclaim-win');
 var overlay = document.querySelector('.overlay');
@@ -38,19 +40,26 @@ forfeitButton.addEventListener('click', function forfeitAndShowAnimation(){
   forfeit(true)
 });
 clearButton.addEventListener('click', clearScores);
-p1ChangeName.addEventListener('click', function toggleLeft(){
-  toggleForm(p1ChangeName, true);
-})
-p2ChangeName.addEventListener('click', function toggleRight(){
-  toggleForm(p2ChangeName, false);
-})
+p1ChangeName.addEventListener('click', toggleForm)
+p2ChangeName.addEventListener('click', toggleForm)
+p1nameInput.addEventListener('keydown', ifEnterAttemptGetName)
+p2nameInput.addEventListener('keydown', ifEnterAttemptGetName)
 
-function toggleForm(node, left){
+function toggleForm(event){
+  var isLeft = event.target.dataset.side === 'left';
+  var node = (isLeft) ? p1ChangeName : p2ChangeName;
   var toggleText = (node.innerText === 'Change') ? 'back!' : 'Change';
   node.innerText = toggleText;
-  document.querySelector(`${ left ? '#section-left' : '#section-right'} input`).classList.toggle('hidden')
+  document.querySelector(`${ isLeft ? '#section-left' : '#section-right'} input`).classList.toggle('hidden')
 }
 
+function ifEnterAttemptGetName(event){
+  if (event.key === 'Enter'){
+    var isLeft = event.target.dataset.side === 'left';
+    var node = (isLeft) ? p1nameInput : p2nameInput;
+    console.log(node.value);
+  }
+}
 
 function clearBoard(){
   game = new Game(players['Ruby Player'], players['JS Player']);
@@ -61,7 +70,7 @@ function clearBoard(){
     tile.classList.add('empty');
     tile.classList.remove('js-bg', 'ruby-bg');
   });
-  setActiveButtons();
+  setButtonStatus();
 }
 
 function ifTileAttemptTurn(event) {
@@ -90,13 +99,11 @@ function checkGameOver( coordinates ){
   if( game.checkForWins(coordinates) ) {
     addPlayerWin();
     winAnimation();
-    window.setTimeout(winAnimationReset, 2400);
   } else if (game.turns >= 9) {
     tieAnimation();
-    window.setTimeout(tieAnimationReset, 1200);
   } else {
     getNextPlayer();
-    setActiveButtons();
+    setButtonStatus();
   }
 }
 
@@ -132,6 +139,7 @@ function winAnimation(){
   overlay.classList.remove('hidden');
   window.setTimeout(winAnimationStage1, 600);
   window.setTimeout(winAnimationStage2, 1800);
+  window.setTimeout(winAnimationReset, 2400);
 }
 
 function winAnimationStage1(){
@@ -157,6 +165,7 @@ function tieAnimation(){
   exclaim.innerText = `tie.`
   exclaim.classList.remove('js-bg', 'ruby-bg', 'js-font', 'ruby-font')
   exclaim.classList.add('show-exclaim', 'draw');
+  window.setTimeout(tieAnimationReset, 1200);
 }
 
 function tieAnimationReset(){
@@ -169,13 +178,14 @@ function getNextPlayer(){
   nextPlayerIcon.src = game.currentPlayer.icon;
 }
 
-function setActiveButtons(){
-  if(game.isEmpty()){
-    forfeitButton.disabled = true;
-    clearButton.disabled = false;
-  } else {
-    forfeitButton.disabled = false;
-    clearButton.disabled = true;
+function setButtonStatus(){
+  var gameIsEmpty = game.isEmpty();
+  forfeitButton.disabled = gameIsEmpty;
+  clearButton.disabled = !gameIsEmpty;
+  p1ChangeName.disabled = !gameIsEmpty, p1ChangeName.innerText = 'Change';
+  p2ChangeName.disabled = !gameIsEmpty, p2ChangeName.innerText = 'Change';
+  for ( var node of document.querySelectorAll('input') ) {
+    node.classList.add('hidden');
   }
 }
 
