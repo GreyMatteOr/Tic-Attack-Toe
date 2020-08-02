@@ -1,13 +1,13 @@
-var players ={
-  'Ruby Player': {
-    name: 'Ruby Player',
-    wins: 0
-  },
-  'JS Player': {
-    name: 'JS Player',
-    wins: 0
-  }
-};
+// var players ={
+//   'Ruby Player': {
+//     name: 'Ruby Player',
+//     wins: 0
+//   },
+//   'JS Player': {
+//     name: 'JS Player',
+//     wins: 0
+//   }
+// };
 var game;
 
 var gameBoard = document.querySelector('#game-board');
@@ -24,7 +24,6 @@ var exclaim = document.querySelector('#exclaim-win');
 var overlay = document.querySelector('.overlay');
 
 window.onload = function doOnLoad(){
-  players = JSON.parse( localStorage.getItem('players') ) || players;
   clearBoard();
   updatePlayerWinsDisplay();
 }
@@ -97,11 +96,7 @@ function clearInputs(){
 function startNewGame(p1Name, p2Name){
   var name1 = p1Name || ( (game) ? game.p1.name : 'Ruby Player' );
   var name2 = p2Name || ( (game) ? game.p2.name : 'JS Player' );
-  name1 = name1.toLowerCase();
-  name2 = name2.toLowerCase();
-  var p1 = players[name1] || {name: name1, wins: 0};
-  var p2 = players[name2] || {name: name2, wins: 0};
-  game = new Game( p1, p2 );
+  game = new Game( name1, name2 );
   nextPlayerIcon.src = game.currentPlayer.icon;
   updatePlayerWinsDisplay();
 }
@@ -154,15 +149,13 @@ function checkGameOver( coordinates ){
 function addPlayerWin(){
   game.giveWin()
   forfeitButton.disabled = true;
-  players[game.currentPlayer.name] = game.currentPlayer.importantData();
-  localStorage.setItem('players', JSON.stringify(players));
 }
 
 function forfeit(showAnimation){
   game.switchCurrentPlayer();
   addPlayerWin();
   if (showAnimation){
-    winAnimation();
+    winAnimation(game.currentPlayer);
     window.setTimeout(winAnimationReset, 2400);
   }
   clearBoard();
@@ -171,25 +164,23 @@ function forfeit(showAnimation){
 function clearScores(){
   for (var player of [game.p1, game.p2] ){
     player.eraseWins();
-    players[player.name] = player.importantData();
   }
-  localStorage.setItem('players', JSON.stringify(players));
   updatePlayerWinsDisplay();
 }
 
-function winAnimation(){
+function winAnimation(winner){
   kablam.classList.remove('fade'), kablam.classList.add('show-kablam');
   exclaim.classList.remove('js-bg', 'ruby-bg', 'js-font', 'ruby-font')
   overlay.classList.remove('hidden');
-  window.setTimeout(winAnimationStage1, 600);
+  window.setTimeout(function stage1() { winAnimationStage1(winner) }, 600);
   window.setTimeout(winAnimationStage2, 1800);
   window.setTimeout(winAnimationReset, 2400);
 }
 
-function winAnimationStage1(){
-  exclaim.innerText = `${game.currentPlayer.name} wins!!`
+function winAnimationStage1(winner){
+  exclaim.innerText = `${winner.name} wins!!`
   exclaim.classList.add('show-exclaim');
-  exclaim.classList.add(game.currentPlayer.bgClass, game.currentPlayer.fontClass);
+  exclaim.classList.add(winner.bgClass, winner.fontClass);
 }
 
 function winAnimationStage2(){
