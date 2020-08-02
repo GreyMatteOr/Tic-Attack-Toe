@@ -51,41 +51,29 @@ function toggleForm(event){
   var toggleText = (node.innerText === 'Change') ? 'back!' : 'Change';
   node.innerText = toggleText;
   document.querySelector(`${ isLeft ? '#section-left' : '#section-right'} input`).classList.toggle('hidden')
+  document.querySelector(`${ isLeft ? '#section-left' : '#section-right'} .anonymous`).classList.toggle('hidden')
 }
 
 function ifEnterAttemptGetName(event){
-  if (event.key === 'Enter' && isValid() && notCurrentlyInUse() ){
-    var p1Name = p1nameInput.value || game.p1.name;
-    var p2Name = p2nameInput.value || game.p2.name;
+  var p1Name = game.p1.name, p2Name = game.p2.name;
+  var userText;
+  if( event.target.dataset.side === 'left' ){
+    p1Name = p1nameInput.value, userText = p1nameInput.value
+  } else {
+    p2Name = p2nameInput.value, userText = p2nameInput.value
+  }
+  if (event.key === 'Enter' && isNotTooLong(userText) && notCurrentlyInUse(userText) ){
     startNewGame( p1Name, p2Name );
     clearInputs();
   }
 }
 
-function notCurrentlyInUse(){
-  var ret = (
-    p1nameInput.value.toLowerCase() !== game.p2.name &&
-    p2nameInput.value.toLowerCase() !== game.p1.name
-  )
-  message = (ret) ? 'Good to go!' : 'Sorry, this person is already playing!';
-  console.log(message);
-  return ret;
+function notCurrentlyInUse(name){
+  return name.toLowerCase() !== game.p2.name && name.toLowerCase() !== game.p1.name;
 }
 
-function isValid(){
-  var isNotEmpty = (
-    p1nameInput.value !== '' ||
-    p2nameInput.value !== ''
-  )
-  var isNotTooLong = (
-    p1nameInput.value.length <= 20 &&
-    p2nameInput.value.length <=20
-  )
-  message = (isNotEmpty) ?
-    ( (isNotTooLong) ? 'Good to go!' : 'Too Many Characters!' ) :
-    'Too Few Characters!';
-  console.log(message);
-  return isNotEmpty && isNotTooLong;
+function isNotTooLong(name){
+  return name.length <= 20
 }
 
 function clearInputs(){
@@ -219,7 +207,7 @@ function setButtonStatus(){
   clearButton.disabled = !gameIsEmpty;
   p1ChangeName.disabled = !gameIsEmpty, p1ChangeName.innerText = 'Change';
   p2ChangeName.disabled = !gameIsEmpty, p2ChangeName.innerText = 'Change';
-  for ( var node of document.querySelectorAll('input') ) {
+  for ( var node of document.querySelectorAll('.if-game-dont-show') ) {
     node.classList.add('hidden');
   }
 }
