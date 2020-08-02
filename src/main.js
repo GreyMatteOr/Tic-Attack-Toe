@@ -19,6 +19,8 @@ var p1ChangeName = document.querySelector('#section-left>button');
 var p2ChangeName = document.querySelector('#section-right>button');
 var p1nameInput = document.querySelector('#section-left>input');
 var p2nameInput = document.querySelector('#section-right>input');
+var p1Anon = document.querySelector('#section-left .anonymous');
+var p2Anon = document.querySelector('#section-right .anonymous');
 var kablam = document.querySelector('#kablam');
 var exclaim = document.querySelector('#exclaim-win');
 var overlay = document.querySelector('.overlay');
@@ -32,17 +34,19 @@ window.beforeunload = function ifGameThenForfeit(){
   if( !game.isEmpty ){
     forfeit(false);
   }
-}
+};
 
 gameBoard.addEventListener('click', ifTileAttemptTurn);
 forfeitButton.addEventListener('click', function forfeitAndShowAnimation(){
   forfeit(true)
 });
 clearButton.addEventListener('click', clearScores);
-p1ChangeName.addEventListener('click', toggleForm)
-p2ChangeName.addEventListener('click', toggleForm)
-p1nameInput.addEventListener('keydown', ifEnterAttemptGetName)
-p2nameInput.addEventListener('keydown', ifEnterAttemptGetName)
+p1ChangeName.addEventListener('click', toggleForm);
+p2ChangeName.addEventListener('click', toggleForm);
+p1nameInput.addEventListener('keydown', ifEnterAttemptGetName);
+p2nameInput.addEventListener('keydown', ifEnterAttemptGetName);
+p1Anon.addEventListener('click', becomeAnonymous);
+p2Anon.addEventListener('click', becomeAnonymous);
 
 function toggleForm(event){
   clearInputs();
@@ -79,6 +83,12 @@ function isNotTooLong(name){
 function clearInputs(){
   p1nameInput.value = '';
   p2nameInput.value = '';
+}
+
+function becomeAnonymous(event){
+  isLeft = ( event.target.dataset.side === 'left' );
+  var names = (isLeft) ? [ 'Ruby Player', game.p2.name ] : [ game.p1.name, 'JS Player' ];
+  startNewGame( names[0], names[1] );
 }
 
 function startNewGame(p1Name, p2Name){
