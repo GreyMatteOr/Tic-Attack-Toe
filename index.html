@@ -15,7 +15,8 @@
           <h2>RUBY player</h2>
         </div>
         <button class='fight-font ruby-font medium-font-size button change-player-button' data-side='left'>Change</button>
-        <input class ='fight-font hidden' placeholder="Enter Name" data-side='left'>
+        <input class ='fight-font hidden if-game-dont-show' placeholder="Enter Name" data-side='left'>
+        <button class='fight-font ruby-font medium-font-size button anonymous if-game-dont-show hidden' data-side='left'>anonymous</button>
       </section>
 
       <section id='section-middle'>
@@ -47,8 +48,9 @@
           <img src="./assets/js-icon.webp" alt="Player2 symbol">
           <h2> JS Player</h2>
         </div>
-        <button class='fight-font js-font medium-font-size button change-profile' data-side='right'>Change</button>
-        <input class='fight-font hidden' placeholder="Enter Name" data-side='right'>
+        <button class='fight-font js-font medium-font-size button' data-side='right'>Change</button>
+        <input class='fight-font if-game-dont-show hidden' placeholder="Enter Name" data-side='right'>
+        <button class='fight-font js-font medium-font-size button hidden if-game-dont-show anonymous' data-side='right'>anonymous</button>
       </section>
 
     </main>

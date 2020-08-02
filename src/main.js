@@ -1,13 +1,13 @@
-var players ={
-  'Ruby Player': {
-    name: 'Ruby Player',
-    wins: 0
-  },
-  'JS Player': {
-    name: 'JS Player',
-    wins: 0
-  }
-};
+// var players ={
+//   'Ruby Player': {
+//     name: 'Ruby Player',
+//     wins: 0
+//   },
+//   'JS Player': {
+//     name: 'JS Player',
+//     wins: 0
+//   }
+// };
 var game;
 
 var gameBoard = document.querySelector('#game-board');
@@ -19,12 +19,13 @@ var p1ChangeName = document.querySelector('#section-left>button');
 var p2ChangeName = document.querySelector('#section-right>button');
 var p1nameInput = document.querySelector('#section-left>input');
 var p2nameInput = document.querySelector('#section-right>input');
+var p1Anon = document.querySelector('#section-left .anonymous');
+var p2Anon = document.querySelector('#section-right .anonymous');
 var kablam = document.querySelector('#kablam');
 var exclaim = document.querySelector('#exclaim-win');
 var overlay = document.querySelector('.overlay');
 
 window.onload = function doOnLoad(){
-  players = JSON.parse( localStorage.getItem('players') ) || players;
   clearBoard();
   updatePlayerWinsDisplay();
 }
@@ -33,17 +34,19 @@ window.beforeunload = function ifGameThenForfeit(){
   if( !game.isEmpty ){
     forfeit(false);
   }
-}
+};
 
 gameBoard.addEventListener('click', ifTileAttemptTurn);
 forfeitButton.addEventListener('click', function forfeitAndShowAnimation(){
   forfeit(true)
 });
 clearButton.addEventListener('click', clearScores);
-p1ChangeName.addEventListener('click', toggleForm)
-p2ChangeName.addEventListener('click', toggleForm)
-p1nameInput.addEventListener('keydown', ifEnterAttemptGetName)
-p2nameInput.addEventListener('keydown', ifEnterAttemptGetName)
+p1ChangeName.addEventListener('click', toggleForm);
+p2ChangeName.addEventListener('click', toggleForm);
+p1nameInput.addEventListener('keydown', ifEnterAttemptGetName);
+p2nameInput.addEventListener('keydown', ifEnterAttemptGetName);
+p1Anon.addEventListener('click', becomeAnonymous);
+p2Anon.addEventListener('click', becomeAnonymous);
 
 function toggleForm(event){
   clearInputs();
@@ -52,41 +55,29 @@ function toggleForm(event){
   var toggleText = (node.innerText === 'Change') ? 'back!' : 'Change';
   node.innerText = toggleText;
   document.querySelector(`${ isLeft ? '#section-left' : '#section-right'} input`).classList.toggle('hidden')
+  document.querySelector(`${ isLeft ? '#section-left' : '#section-right'} .anonymous`).classList.toggle('hidden')
 }
 
 function ifEnterAttemptGetName(event){
-  if (event.key === 'Enter' && isValid() && notCurrentlyInUse() ){
-    var p1Name = p1nameInput.value || game.p1.name;
-    var p2Name = p2nameInput.value || game.p2.name;
+  var p1Name = game.p1.name, p2Name = game.p2.name;
+  var userText;
+  if( event.target.dataset.side === 'left' ){
+    p1Name = p1nameInput.value, userText = p1nameInput.value
+  } else {
+    p2Name = p2nameInput.value, userText = p2nameInput.value
+  }
+  if (event.key === 'Enter' && isNotTooLong(userText) && notCurrentlyInUse(userText) ){
     startNewGame( p1Name, p2Name );
     clearInputs();
   }
 }
 
-function notCurrentlyInUse(){
-  var ret = (
-    p1nameInput.value.toLowerCase() !== game.p2.name &&
-    p2nameInput.value.toLowerCase() !== game.p1.name
-  )
-  message = (ret) ? 'Good to go!' : 'Sorry, this person is already playing!';
-  console.log(message);
-  return ret;
+function notCurrentlyInUse(name){
+  return name.toLowerCase() !== game.p2.name && name.toLowerCase() !== game.p1.name;
 }
 
-function isValid(){
-  var isNotEmpty = (
-    p1nameInput.value !== '' ||
-    p2nameInput.value !== ''
-  )
-  var isNotTooLong = (
-    p1nameInput.value.length <= 20 &&
-    p2nameInput.value.length <=20
-  )
-  message = (isNotEmpty) ?
-    ( (isNotTooLong) ? 'Good to go!' : 'Too Many Characters!' ) :
-    'Too Few Characters!';
-  console.log(message);
-  return isNotEmpty && isNotTooLong;
+function isNotTooLong(name){
+  return name.length <= 20
 }
 
 function clearInputs(){
@@ -94,14 +85,16 @@ function clearInputs(){
   p2nameInput.value = '';
 }
 
+function becomeAnonymous(event){
+  isLeft = ( event.target.dataset.side === 'left' );
+  var names = (isLeft) ? [ 'Ruby Player', game.p2.name ] : [ game.p1.name, 'JS Player' ];
+  startNewGame( names[0], names[1] );
+}
+
 function startNewGame(p1Name, p2Name){
   var name1 = p1Name || ( (game) ? game.p1.name : 'Ruby Player' );
   var name2 = p2Name || ( (game) ? game.p2.name : 'JS Player' );
-  name1 = name1.toLowerCase();
-  name2 = name2.toLowerCase();
-  var p1 = players[name1] || {name: name1, wins: 0};
-  var p2 = players[name2] || {name: name2, wins: 0};
-  game = new Game( p1, p2 );
+  game = new Game( name1, name2 );
   nextPlayerIcon.src = game.currentPlayer.icon;
   updatePlayerWinsDisplay();
 }
@@ -142,7 +135,7 @@ function fill(tile){
 function checkGameOver( coordinates ){
   if( game.checkForWins(coordinates) ) {
     addPlayerWin();
-    winAnimation();
+    winAnimation(game.currentPlayer);
   } else if (game.turns >= 9) {
     tieAnimation();
   } else {
@@ -153,43 +146,40 @@ function checkGameOver( coordinates ){
 
 function addPlayerWin(){
   game.giveWin()
-  forfeitButton.disabled = true;
-  players[game.currentPlayer.name] = game.currentPlayer.importantData();
-  localStorage.setItem('players', JSON.stringify(players));
+  updatePlayerWinsDisplay();
 }
 
 function forfeit(showAnimation){
   game.switchCurrentPlayer();
   addPlayerWin();
   if (showAnimation){
-    winAnimation();
+    winAnimation(game.currentPlayer);
     window.setTimeout(winAnimationReset, 2400);
   }
   clearBoard();
-  updatePlayerWinsDisplay();
 }
+
 function clearScores(){
   for (var player of [game.p1, game.p2] ){
     player.eraseWins();
-    players[player.name] = player.importantData();
   }
-  localStorage.setItem('players', JSON.stringify(players));
   updatePlayerWinsDisplay();
 }
 
-function winAnimation(){
+function winAnimation(winner){
+  forfeitButton.disabled = true;
   kablam.classList.remove('fade'), kablam.classList.add('show-kablam');
   exclaim.classList.remove('js-bg', 'ruby-bg', 'js-font', 'ruby-font')
   overlay.classList.remove('hidden');
-  window.setTimeout(winAnimationStage1, 600);
+  window.setTimeout(function stage1() { winAnimationStage1(winner) }, 600);
   window.setTimeout(winAnimationStage2, 1800);
   window.setTimeout(winAnimationReset, 2400);
 }
 
-function winAnimationStage1(){
-  exclaim.innerText = `${game.currentPlayer.name} wins!!`
+function winAnimationStage1(winner){
+  exclaim.innerText = `${winner.name} wins!!`
   exclaim.classList.add('show-exclaim');
-  exclaim.classList.add(game.currentPlayer.bgClass, game.currentPlayer.fontClass);
+  exclaim.classList.add(winner.bgClass, winner.fontClass);
 }
 
 function winAnimationStage2(){
@@ -199,7 +189,6 @@ function winAnimationStage2(){
 
 function winAnimationReset(){
   clearBoard();
-  updatePlayerWinsDisplay();
   kablam.classList.remove('show-kablam');
   overlay.classList.add('hidden');
 }
@@ -228,12 +217,16 @@ function setButtonStatus(){
   clearButton.disabled = !gameIsEmpty;
   p1ChangeName.disabled = !gameIsEmpty, p1ChangeName.innerText = 'Change';
   p2ChangeName.disabled = !gameIsEmpty, p2ChangeName.innerText = 'Change';
-  for ( var node of document.querySelectorAll('input') ) {
+  for ( var node of document.querySelectorAll('.if-game-dont-show') ) {
     node.classList.add('hidden');
   }
 }
 
-function updatePlayerWinsDisplay(){
-  playerNames[0].innerText = `${game.p1.name} wins: ${game.p1.wins}`;
-  playerNames[1].innerText = `${game.p2.name} wins: ${game.p2.wins}`;
+function updatePlayerWinsDisplay() {
+  var doNotShowScoreP1 = (game.p1.name === 'ruby player' || game.p1.name === 'js player');
+  var doNotShowScoreP2 = (game.p2.name === 'ruby player' || game.p2.name === 'js player');
+  p1 = `${game.p1.name}${ (doNotShowScoreP1) ? `` : ` wins: ${game.p1.wins}` }`;
+  p2 = `${game.p2.name}${ (doNotShowScoreP2) ? `` : ` wins: ${game.p2.wins}` }`;
+  playerNames[0].innerText = p1;
+  playerNames[1].innerText = p2;
 }
