@@ -22,11 +22,20 @@ var overlay = document.querySelector('.overlay');
 window.onload = function doOnLoad(){
   players = JSON.parse( localStorage.getItem('players') ) || players;
   clearBoard();
-  updatePlayerWins();
+  updatePlayerWinsDisplay();
 }
-window.beforeunload = forfeit;
+
+window.beforeunload = function ifGameThenForfeit(){
+  if( !game.isEmpty ){
+    forfeit(false);
+  }
+}
+
 gameBoard.addEventListener('click', ifTileAttemptTurn);
-forfeitButton.addEventListener('click', forfeit);
+forfeitButton.addEventListener('click', function forfeitAndShowAnimation(){
+  forfeit(true)
+});
+clearButton.addEventListener('click', clearScores);
 
 
 function clearBoard(){
@@ -84,10 +93,23 @@ function addPlayerWin(){
   localStorage.setItem('players', JSON.stringify(players));
 }
 
-function forfeit(){
+function forfeit(showAnimation){
   game.switchCurrentPlayer();
   addPlayerWin();
   clearBoard();
+  updatePlayerWinsDisplay();
+  if (showAnimation){
+    winAnimation();
+    window.setTimeout(winAnimationReset, 2400);
+  }
+}
+function clearScores(){
+  for (var player of [game.player1, game.player2] ){
+    player.eraseWins();
+    players[player.name] = player.importantData();
+  }
+  localStorage.setItem('players', JSON.stringify(players));
+  updatePlayerWinsDisplay();
 }
 
 function winAnimation(){
@@ -111,7 +133,7 @@ function winAnimationStage2(){
 
 function winAnimationReset(){
   clearBoard();
-  updatePlayerWins();
+  updatePlayerWinsDisplay();
   kablam.classList.remove('show-kablam');
   overlay.classList.add('hidden');
 }
@@ -143,7 +165,7 @@ function setActiveButtons(){
   }
 }
 
-function updatePlayerWins(){
+function updatePlayerWinsDisplay(){
   playerNames[0].innerText = `${game.player1.name} wins: ${game.player1.wins}`;
   playerNames[1].innerText = `${game.player2.name} wins: ${game.player2.wins}`;
 }

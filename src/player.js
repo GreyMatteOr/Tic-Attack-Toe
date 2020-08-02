@@ -13,5 +13,9 @@ class Player{
       name: this.name,
       wins: this.wins
     };
+  };
+
+  eraseWins(){
+    this.wins = 0;
   }
 };
