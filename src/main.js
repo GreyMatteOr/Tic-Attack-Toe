@@ -15,6 +15,8 @@ var nextPlayerIcon = document.querySelector('h1 img');
 var playerNames = document.querySelectorAll('.div-player-score h2');
 var forfeitButton = document.querySelector('.forfeit');
 var clearButton = document.querySelector('.clear')
+var p1ChangeName = document.querySelector('#section-left>button')
+var p2ChangeName = document.querySelector('#section-right>button')
 var kablam = document.querySelector('#kablam');
 var exclaim = document.querySelector('#exclaim-win');
 var overlay = document.querySelector('.overlay');
@@ -36,6 +38,18 @@ forfeitButton.addEventListener('click', function forfeitAndShowAnimation(){
   forfeit(true)
 });
 clearButton.addEventListener('click', clearScores);
+p1ChangeName.addEventListener('click', function toggleLeft(){
+  toggleForm(p1ChangeName, true);
+})
+p2ChangeName.addEventListener('click', function toggleRight(){
+  toggleForm(p2ChangeName, false);
+})
+
+function toggleForm(node, left){
+  var toggleText = (node.innerText === 'Change') ? 'back!' : 'Change';
+  node.innerText = toggleText;
+  document.querySelector(`${ left ? '#section-left' : '#section-right'} input`).classList.toggle('hidden')
+}
 
 
 function clearBoard(){
