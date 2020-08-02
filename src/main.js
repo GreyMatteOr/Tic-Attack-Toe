@@ -51,11 +51,13 @@ p2Anon.addEventListener('click', becomeAnonymous);
 function toggleForm(event) {
   clearInputs();
   var isLeft = event.target.dataset.side === 'left';
-  var node = (isLeft) ? p1ChangeName : p2ChangeName;
+  var section = (isLeft) ? '#section-left' : '#section-right';
+  var node = (isLeft) ? p1ChangeName : p2ChangeName
   var toggleText = (node.innerText === 'Change') ? 'back!' : 'Change';
   node.innerText = toggleText;
-  document.querySelector(`${ isLeft ? '#section-left' : '#section-right'} input`).classList.toggle('hidden');
-  document.querySelector(`${ isLeft ? '#section-left' : '#section-right'} .anonymous`).classList.toggle('hidden');
+  document.querySelector(`${ section } input`).classList.toggle('hidden');
+  document.querySelector(`${ section } .anonymous`).classList.toggle('hidden');
+  document.querySelector(`${ section } .AI`).classList.toggle('hidden')
 };
 
 function ifEnterAttemptChangeName(event) {
@@ -118,6 +120,7 @@ function becomeAnonymous(event) {
   isLeft = ( event.target.dataset.side === 'left' );
   var names = (isLeft) ? [ 'Ruby Player', game.p2.name ] : [ game.p1.name, 'JS Player' ];
   startNewGame( names[0], names[1] );
+  toggleForm(event);
 };
 
 function startNewGame(p1Name, p2Name) {
