@@ -1,5 +1,5 @@
 class Game{
-  constructor(p1Name, p2Name, inARowToWin){
+  constructor(p1Name, p2Name, inARowToWin) {
     this.board = [
       ['','',''],
       ['','',''],
@@ -18,9 +18,9 @@ class Game{
       upRight: this.upRight
     };
     this.turns = 0;
-  }
+  };
 
-  newGame(){
+  newGame() {
     this.board = [
       ['','',''],
       ['','',''],
@@ -28,35 +28,35 @@ class Game{
     ];
     this.currentPlayer = this.randomPlayer( [this.p1, this.p2] );
     this.turns = 0;
-  }
+  };
 
-  randomPlayer(playerList){
-    var randomIndex = [ Math.floor( Math.random() * playerList.length ) ]
-    return playerList[randomIndex]
-  }
+  randomPlayer(playerList) {
+    var randomIndex = [ Math.floor( Math.random() * playerList.length ) ];
+    return playerList[randomIndex];
+  };
 
-  tileIsEmpty(xy){
-    if ( this.board[ xy[0] ][ xy[1] ] === '' ){
+  tileIsEmpty(xy) {
+    if ( this.board[ xy[0] ][ xy[1] ] === '' ) {
       this.board[ xy[0] ][ xy[1] ] = this.currentPlayer.symbol;
       this.turns++;
       return true;
     }
     return false;
-  }
+  };
 
-  switchCurrentPlayer(){
+  switchCurrentPlayer() {
     this.currentPlayer = this.currentPlayer.opponent;
-  }
+  };
 
-  checkForWins(xy){
+  checkForWins(xy) {
     var horizontal = this.numInARow( [ xy[0], 0 ], this.directions.right );
     var vertical = this.numInARow( [ 0, xy[1] ], this.directions.down );
     var diagonalDR = this.numInARow( [ 0, 0 ], this.directions.downRight );
     var diagonalUR = this.numInARow( [ this.board.length - 1, 0 ], this.directions.upRight );
     return Math.max(horizontal, vertical, diagonalDR, diagonalUR) === this.inARowToWin;
-  }
+  };
 
-  numInARow(xy, direction){
+  numInARow(xy, direction) {
     if( this.board[ xy[0] ] === undefined ||
         this.board[ xy[0] ][ xy[1] ] === undefined ||
         this.board[ xy[0] ][ xy[1] ] !== this.currentPlayer.symbol ) {
@@ -65,27 +65,27 @@ class Game{
     return 1 + this.numInARow( direction(xy), direction );
   };
 
-  giveWin(){
+  giveWin() {
     this.currentPlayer.wins++;
-  }
+  };
 
-  isEmpty(){
+  isEmpty() {
     return this.turns === 0;
-  }
+  };
 
-  right(xy){
+  right(xy) {
     return [ xy[0], (xy[1] + 1) ];
   };
 
-  downRight(xy){
+  downRight(xy) {
     return [ (xy[0] + 1), (xy[1] + 1) ];
   };
 
-  down(xy){
+  down(xy) {
     return [ (xy[0] + 1), xy[1] ];
   };
 
-  upRight(xy){
+  upRight(xy) {
     return [ (xy[0] - 1), (xy[1] + 1) ];
   };
-}
+};

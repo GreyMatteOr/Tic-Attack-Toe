@@ -25,20 +25,20 @@ var kablam = document.querySelector('#kablam');
 var exclaim = document.querySelector('#exclaim-win');
 var overlay = document.querySelector('.overlay');
 
-window.onload = function doOnLoad(){
+window.onload = function doOnLoad() {
   clearBoard();
   updatePlayerWinsDisplay();
-}
+};
 
-window.beforeunload = function ifGameThenForfeit(){
-  if( !game.isEmpty ){
+window.beforeunload = function ifGameThenForfeit() {
+  if( !game.isEmpty ) {
     forfeit(false);
   }
 };
 
 gameBoard.addEventListener('click', ifTileAttemptTurn);
-forfeitButton.addEventListener('click', function forfeitAndShowAnimation(){
-  forfeit(true)
+forfeitButton.addEventListener('click', function forfeitAndShowAnimation() {
+  forfeit(true);
 });
 clearButton.addEventListener('click', clearScores);
 p1ChangeName.addEventListener('click', toggleForm);
@@ -48,58 +48,61 @@ p2nameInput.addEventListener('keydown', ifEnterAttemptGetName);
 p1Anon.addEventListener('click', becomeAnonymous);
 p2Anon.addEventListener('click', becomeAnonymous);
 
-function toggleForm(event){
+function toggleForm(event) {
   clearInputs();
   var isLeft = event.target.dataset.side === 'left';
   var node = (isLeft) ? p1ChangeName : p2ChangeName;
   var toggleText = (node.innerText === 'Change') ? 'back!' : 'Change';
   node.innerText = toggleText;
-  document.querySelector(`${ isLeft ? '#section-left' : '#section-right'} input`).classList.toggle('hidden')
-  document.querySelector(`${ isLeft ? '#section-left' : '#section-right'} .anonymous`).classList.toggle('hidden')
-}
+  document.querySelector(`${ isLeft ? '#section-left' : '#section-right'} input`).classList.toggle('hidden');
+  document.querySelector(`${ isLeft ? '#section-left' : '#section-right'} .anonymous`).classList.toggle('hidden');
+};
 
-function ifEnterAttemptGetName(event){
+function ifEnterAttemptGetName(event) {
   var p1Name = game.p1.name, p2Name = game.p2.name;
   var userText;
-  if( event.target.dataset.side === 'left' ){
-    p1Name = p1nameInput.value, userText = p1nameInput.value
+  if( event.target.dataset.side === 'left' ) {
+    p1Name = p1nameInput.value, userText = p1nameInput.value;
   } else {
-    p2Name = p2nameInput.value, userText = p2nameInput.value
+    p2Name = p2nameInput.value, userText = p2nameInput.value;
   }
-  if (event.key === 'Enter' && isNotTooLong(userText) && notCurrentlyInUse(userText) ){
+  if (event.key === 'Enter' && isNotTooLong(userText) && notCurrentlyInUse(userText) ) {
     startNewGame( p1Name, p2Name );
     clearInputs();
   }
-}
+};
 
-function notCurrentlyInUse(name){
+function notCurrentlyInUse(name) {
   return name.toLowerCase() !== game.p2.name && name.toLowerCase() !== game.p1.name;
-}
+};
 
-function isNotTooLong(name){
-  return name.length <= 20
-}
+function isNotTooLong(name) {
+  if (name.length <= 20) {
+    flashTooLongWarning();
+  }
+  return name.length <= 20;
+};
 
-function clearInputs(){
+function clearInputs() {
   p1nameInput.value = '';
   p2nameInput.value = '';
-}
+};
 
-function becomeAnonymous(event){
+function becomeAnonymous(event) {
   isLeft = ( event.target.dataset.side === 'left' );
   var names = (isLeft) ? [ 'Ruby Player', game.p2.name ] : [ game.p1.name, 'JS Player' ];
   startNewGame( names[0], names[1] );
-}
+};
 
-function startNewGame(p1Name, p2Name){
+function startNewGame(p1Name, p2Name) {
   var name1 = p1Name || ( (game) ? game.p1.name : 'Ruby Player' );
   var name2 = p2Name || ( (game) ? game.p2.name : 'JS Player' );
   game = new Game( name1, name2 );
   nextPlayerIcon.src = game.currentPlayer.icon;
   updatePlayerWinsDisplay();
-}
+};
 
-function clearBoard(){
+function clearBoard() {
   startNewGame();
   var tiles = document.querySelectorAll('.tile');
   tiles.forEach(function insertEmptyIcon(tile) {
@@ -108,14 +111,14 @@ function clearBoard(){
     tile.classList.remove('js-bg', 'ruby-bg');
   });
   setButtonStatus();
-}
+};
 
 function ifTileAttemptTurn(event) {
   var tile = event.target.closest('.tile');
   if (tile) {
     ifEmptyThenFill(tile);
   }
-}
+};
 
 function ifEmptyThenFill(tile) {
   var row = 'tmb'.indexOf(tile.id[0]);
@@ -124,15 +127,15 @@ function ifEmptyThenFill(tile) {
     fill(tile);
     checkGameOver( [row, col] );
   }
-}
+};
 
-function fill(tile){
+function fill(tile) {
   tile.src = game.currentPlayer.icon;
   tile.classList.add(game.currentPlayer.colorClass);
   tile.classList.remove('empty');
-}
+};
 
-function checkGameOver( coordinates ){
+function checkGameOver( coordinates ) {
   if( game.checkForWins(coordinates) ) {
     addPlayerWin();
     winAnimation(game.currentPlayer);
@@ -142,76 +145,76 @@ function checkGameOver( coordinates ){
     getNextPlayer();
     setButtonStatus();
   }
-}
+};
 
-function addPlayerWin(){
-  game.giveWin()
+function addPlayerWin() {
+  game.giveWin();
   updatePlayerWinsDisplay();
-}
+};
 
-function forfeit(showAnimation){
+function forfeit(showAnimation) {
   game.switchCurrentPlayer();
   addPlayerWin();
-  if (showAnimation){
+  if (showAnimation) {
     winAnimation(game.currentPlayer);
     window.setTimeout(winAnimationReset, 2400);
   }
   clearBoard();
-}
+};
 
-function clearScores(){
-  for (var player of [game.p1, game.p2] ){
+function clearScores() {
+  for (var player of [game.p1, game.p2] ) {
     player.eraseWins();
-  }
+  };
   updatePlayerWinsDisplay();
-}
+};
 
-function winAnimation(winner){
+function winAnimation(winner) {
   forfeitButton.disabled = true;
   kablam.classList.remove('fade'), kablam.classList.add('show-kablam');
-  exclaim.classList.remove('js-bg', 'ruby-bg', 'js-font', 'ruby-font')
+  exclaim.classList.remove('js-bg', 'ruby-bg', 'js-font', 'ruby-font');
   overlay.classList.remove('hidden');
   window.setTimeout(function stage1() { winAnimationStage1(winner) }, 600);
   window.setTimeout(winAnimationStage2, 1800);
   window.setTimeout(winAnimationReset, 2400);
-}
+};
 
-function winAnimationStage1(winner){
-  exclaim.innerText = `${winner.name} wins!!`
+function winAnimationStage1(winner) {
+  exclaim.innerText = `${winner.name} wins!!`;
   exclaim.classList.add('show-exclaim');
   exclaim.classList.add(winner.bgClass, winner.fontClass);
-}
+};
 
-function winAnimationStage2(){
+function winAnimationStage2() {
   kablam.classList.add('fade');
   exclaim.classList.remove('show-exclaim');
-}
+};
 
-function winAnimationReset(){
+function winAnimationReset() {
   clearBoard();
   kablam.classList.remove('show-kablam');
   overlay.classList.add('hidden');
-}
+};
 
-function tieAnimation(){
+function tieAnimation() {
   forfeitButton.disabled = true;
-  exclaim.innerText = `tie.`
-  exclaim.classList.remove('js-bg', 'ruby-bg', 'js-font', 'ruby-font')
+  exclaim.innerText = `tie.`;
+  exclaim.classList.remove('js-bg', 'ruby-bg', 'js-font', 'ruby-font');
   exclaim.classList.add('show-exclaim', 'draw');
   window.setTimeout(tieAnimationReset, 1200);
-}
+};
 
-function tieAnimationReset(){
+function tieAnimationReset() {
   exclaim.classList.remove('show-exclaim', 'draw');
   clearBoard();
-}
+};
 
-function getNextPlayer(){
+function getNextPlayer() {
   game.switchCurrentPlayer();
   nextPlayerIcon.src = game.currentPlayer.icon;
-}
+};
 
-function setButtonStatus(){
+function setButtonStatus() {
   var gameIsEmpty = game.isEmpty();
   forfeitButton.disabled = gameIsEmpty;
   clearButton.disabled = !gameIsEmpty;
@@ -220,7 +223,7 @@ function setButtonStatus(){
   for ( var node of document.querySelectorAll('.if-game-dont-show') ) {
     node.classList.add('hidden');
   }
-}
+};
 
 function updatePlayerWinsDisplay() {
   var doNotShowScoreP1 = (game.p1.name === 'ruby player' || game.p1.name === 'js player');
@@ -229,4 +232,4 @@ function updatePlayerWinsDisplay() {
   p2 = `${game.p2.name}${ (doNotShowScoreP2) ? `` : ` wins: ${game.p2.wins}` }`;
   playerNames[0].innerText = p1;
   playerNames[1].innerText = p2;
-}
+};

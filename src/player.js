@@ -1,5 +1,5 @@
 class Player{
-  constructor(symbol, icon, name, bgClass, fontClass){
+  constructor(symbol, icon, name, bgClass, fontClass) {
     this.symbol = symbol;
     this.icon = icon;
     this.bgClass = bgClass;
@@ -19,29 +19,29 @@ class Player{
       get() {
         return this._wins;
       },
-      set(num){
+      set(num) {
         this._wins = num;
         this.saveWinsToStorage();
       }
     });
-  }
+  };
 
-  stringifyImportantData(){
+  stringifyImportantData() {
     return JSON.stringify({
       name: this.name,
       wins: this.wins
     });
   };
 
-  eraseWins(){
+  eraseWins() {
     this.wins = 0;
-  }
+  };
 
-  saveWinsToStorage(){
+  saveWinsToStorage() {
     localStorage.setItem( this.name, this.stringifyImportantData() );
-  }
+  };
 
-  retrieveWinsFromStorage(){
+  retrieveWinsFromStorage() {
     var memory = JSON.parse( localStorage.getItem( this.name ) );
     return (memory) ? memory.wins : 0;
   }
