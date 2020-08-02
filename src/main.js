@@ -137,7 +137,7 @@ function fill(tile){
 function checkGameOver( coordinates ){
   if( game.checkForWins(coordinates) ) {
     addPlayerWin();
-    winAnimation();
+    winAnimation(game.currentPlayer);
   } else if (game.turns >= 9) {
     tieAnimation();
   } else {
@@ -148,7 +148,7 @@ function checkGameOver( coordinates ){
 
 function addPlayerWin(){
   game.giveWin()
-  forfeitButton.disabled = true;
+  updatePlayerWinsDisplay();
 }
 
 function forfeit(showAnimation){
@@ -159,8 +159,8 @@ function forfeit(showAnimation){
     window.setTimeout(winAnimationReset, 2400);
   }
   clearBoard();
-  updatePlayerWinsDisplay();
 }
+
 function clearScores(){
   for (var player of [game.p1, game.p2] ){
     player.eraseWins();
@@ -169,6 +169,7 @@ function clearScores(){
 }
 
 function winAnimation(winner){
+  forfeitButton.disabled = true;
   kablam.classList.remove('fade'), kablam.classList.add('show-kablam');
   exclaim.classList.remove('js-bg', 'ruby-bg', 'js-font', 'ruby-font')
   overlay.classList.remove('hidden');
@@ -190,7 +191,6 @@ function winAnimationStage2(){
 
 function winAnimationReset(){
   clearBoard();
-  updatePlayerWinsDisplay();
   kablam.classList.remove('show-kablam');
   overlay.classList.add('hidden');
 }
@@ -224,7 +224,11 @@ function setButtonStatus(){
   }
 }
 
-function updatePlayerWinsDisplay(){
-  playerNames[0].innerText = `${game.p1.name} wins: ${game.p1.wins}`;
-  playerNames[1].innerText = `${game.p2.name} wins: ${game.p2.wins}`;
+function updatePlayerWinsDisplay() {
+  var doNotShowScoreP1 = (game.p1.name === 'ruby player' || game.p1.name === 'js player');
+  var doNotShowScoreP2 = (game.p2.name === 'ruby player' || game.p2.name === 'js player');
+  p1 = `${game.p1.name}${ (doNotShowScoreP1) ? `` : ` wins: ${game.p1.wins}` }`;
+  p2 = `${game.p2.name}${ (doNotShowScoreP2) ? `` : ` wins: ${game.p2.wins}` }`;
+  playerNames[0].innerText = p1;
+  playerNames[1].innerText = p2;
 }
