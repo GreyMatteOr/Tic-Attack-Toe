@@ -68,11 +68,22 @@ main{
 
 #section-left .div-player-score{
   background-color:rgb(255, 144, 130, 0.40);
-
 }
 
 #section-left h2{
   text-shadow: black 0.1em 0.1em .1em;
+}
+#section-left button{
+  background-color: #a41b0e;
+}
+
+#section-left button:hover{
+  background-color: #bb1c0d;
+}
+
+#section-left button:disabled{
+  color: #2f1a18;
+  background-color: #550700;
 }
 
 #section-right{
@@ -90,6 +101,19 @@ main{
 
 #section-right h2{
     text-shadow: black 0.1em 0.1em 0.2em;
+}
+
+#section-right button{
+  background-color: #237f16;
+}
+
+#section-right button:hover{
+  background-color: #26aa14;
+}
+
+#section-right button:disabled{
+  color: #254022;
+  background-color: #0e6801;
 }
 
 .div-player-score{
@@ -114,6 +138,7 @@ h1{
   align-items: center;
   justify-content: center;
   background-color:rgb(70, 72, 62, 0.40);
+  padding: .5em 0;
 }
 
 h1 img{
@@ -183,10 +208,12 @@ h1 img{
 }
 
 .exclaim{
+  height: min-content;
   bottom: 15%;
   font-size: 4em;
   transition-property: color, box-shadow, text-shadow, opacity, z-index;
   transition-duration: .6s;
+  /* padding-bottom: .75em; */
 }
 
 .show-exclaim{
@@ -263,6 +290,34 @@ h1 img{
   /* border-style: double; */
 }
 
+.clear-button{
+  font-size: 20px;
+  background-color: #7a6a38;
+  border-color: #6e591c;
+  padding: .5em;
+  margin-top: 1em;
+}
+
+.clear-button:hover{
+  background-color: #a4831e;
+}
+
+.clear-button:disabled{
+  color: #222;
+  background-color: #a39360;
+}
+
+.button{
+  margin-top: .75em;
+  width: 100%;
+}
+
+input{
+  width: 100%;
+  text-align: center;
+  margin-top: .5em;
+}
+
 .hidden{
   display: none;
 }
@@ -272,21 +327,25 @@ h1 img{
   letter-spacing: 1px;
   text-shadow: black 0.1em 0.1em 0.3em;
   border-radius: 1em;
-  padding: .5em 0;
 }
 
 .js-font{
   font-family: 'Noise Machine';
   letter-spacing: 2pt;
-  color: #81cf08;
+  color: #ace852;
 }
 
 .ruby-font{
   font-family: 'Ruby';
   letter-spacing: 1pt;
+  color: #fdd;
 }
 
 .draw{
   background-color:rgb(70, 72, 62, 0.40);
   color: white;
+}
+
+.medium-font-size{
+  font-size: 1.5em;
 }

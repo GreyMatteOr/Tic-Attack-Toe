@@ -12,8 +12,10 @@
       <section class='ruby-font' id='section-left'>
         <div class="div-player-score">
           <img src="./assets/ruby.png" alt="Player 1 symbol">
-          <h2>RUBY player Wins</h2>
+          <h2>RUBY player</h2>
         </div>
+        <button class='fight-font ruby-font medium-font-size button change-player-button' data-side='left'>Change</button>
+        <input class ='fight-font hidden' placeholder="Enter Name" data-side='left'>
       </section>
 
       <section id='section-middle'>
@@ -34,13 +36,19 @@
             <img class='bottom right tile' id ='br' src="" alt="Bottom Right tile"/>
             <img id = 'ttt-grid' src="./assets/ttt-grid.png" alt="Game-Grid"/>
           </div>
+          <div class="clear-buttons">
+            <button class='fight-font clear-button clear'>clear scores</button>
+            <button class='fight-font clear-button forfeit'>forfeit</button>
+          </div>
       </section>
 
       <section class='js-font' id='section-right'>
         <div class="div-player-score">
           <img src="./assets/js-icon.webp" alt="Player2 symbol">
-          <h2> JS Player Wins</h2>
+          <h2> JS Player</h2>
         </div>
+        <button class='fight-font js-font medium-font-size button change-profile' data-side='right'>Change</button>
+        <input class='fight-font hidden' placeholder="Enter Name" data-side='right'>
       </section>
 
     </main>
