@@ -1,15 +1,15 @@
 class Game{
-  constructor(player1Obj, player2Obj, inARowToWin){
+  constructor(p1Obj, p2Obj, inARowToWin){
     this.board = [
       ['','',''],
       ['','',''],
       ['','','']
     ];
-    this.player1 = new Player('x', './assets/ruby.png', (player1Obj.name || 'Ruby Player'), 'ruby-bg', 'ruby-font', player1Obj.wins);
-    this.player2 = new Player('o', './assets/js-icon.webp', (player2Obj.name || 'JS Player'), 'js-bg', 'js-font', player2Obj.wins);
-    this.currentPlayer = this.randomPlayer( [this.player1, this.player2] );
-    this.player1.opponent = this.player2;
-    this.player2.opponent = this.player1;
+    this.p1 = new Player('x', './assets/ruby.png', (p1Obj.name || 'Ruby Player'), 'ruby-bg', 'ruby-font', p1Obj.wins);
+    this.p2 = new Player('o', './assets/js-icon.webp', (p2Obj.name || 'JS Player'), 'js-bg', 'js-font', p2Obj.wins);
+    this.currentPlayer = this.randomPlayer( [this.p1, this.p2] );
+    this.p1.opponent = this.p2;
+    this.p2.opponent = this.p1;
     this.inARowToWin = inARowToWin || 3;
     this.directions = {
       right: this.right,
@@ -20,13 +20,13 @@ class Game{
     this.turns = 0;
   }
 
-  newGame(player1Data,){
+  newGame(){
     this.board = [
       ['','',''],
       ['','',''],
       ['','','']
     ];
-    this.currentPlayer = this.randomPlayer( [this.player1, this.player2] );
+    this.currentPlayer = this.randomPlayer( [this.p1, this.p2] );
     this.turns = 0;
   }
 
@@ -64,6 +64,10 @@ class Game{
     }
     return 1 + this.numInARow( direction(xy), direction );
   };
+
+  giveWin(){
+    this.currentPlayer.wins++;
+  }
 
   isEmpty(){
     return this.turns === 0;

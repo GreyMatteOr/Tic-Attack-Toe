@@ -46,6 +46,7 @@ p1nameInput.addEventListener('keydown', ifEnterAttemptGetName)
 p2nameInput.addEventListener('keydown', ifEnterAttemptGetName)
 
 function toggleForm(event){
+  clearInputs();
   var isLeft = event.target.dataset.side === 'left';
   var node = (isLeft) ? p1ChangeName : p2ChangeName;
   var toggleText = (node.innerText === 'Change') ? 'back!' : 'Change';
@@ -54,16 +55,59 @@ function toggleForm(event){
 }
 
 function ifEnterAttemptGetName(event){
-  if (event.key === 'Enter'){
-    var isLeft = event.target.dataset.side === 'left';
-    var node = (isLeft) ? p1nameInput : p2nameInput;
-    console.log(node.value);
+  if (event.key === 'Enter' && isValid() && notCurrentlyInUse() ){
+    var p1Name = p1nameInput.value || game.p1.name;
+    var p2Name = p2nameInput.value || game.p2.name;
+    startNewGame( p1Name, p2Name );
+    clearInputs();
   }
 }
 
-function clearBoard(){
-  game = new Game(players['Ruby Player'], players['JS Player']);
+function notCurrentlyInUse(){
+  var ret = (
+    p1nameInput.value.toLowerCase() !== game.p2.name &&
+    p2nameInput.value.toLowerCase() !== game.p1.name
+  )
+  message = (ret) ? 'Good to go!' : 'Sorry, this person is already playing!';
+  console.log(message);
+  return ret;
+}
+
+function isValid(){
+  var isNotEmpty = (
+    p1nameInput.value !== '' ||
+    p2nameInput.value !== ''
+  )
+  var isNotTooLong = (
+    p1nameInput.value.length <= 20 &&
+    p2nameInput.value.length <=20
+  )
+  message = (isNotEmpty) ?
+    ( (isNotTooLong) ? 'Good to go!' : 'Too Many Characters!' ) :
+    'Too Few Characters!';
+  console.log(message);
+  return isNotEmpty && isNotTooLong;
+}
+
+function clearInputs(){
+  p1nameInput.value = '';
+  p2nameInput.value = '';
+}
+
+function startNewGame(p1Name, p2Name){
+  var name1 = p1Name || ( (game) ? game.p1.name : 'Ruby Player' );
+  var name2 = p2Name || ( (game) ? game.p2.name : 'JS Player' );
+  name1 = name1.toLowerCase();
+  name2 = name2.toLowerCase();
+  var p1 = players[name1] || {name: name1, wins: 0};
+  var p2 = players[name2] || {name: name2, wins: 0};
+  game = new Game( p1, p2 );
   nextPlayerIcon.src = game.currentPlayer.icon;
+  updatePlayerWinsDisplay();
+}
+
+function clearBoard(){
+  startNewGame();
   var tiles = document.querySelectorAll('.tile');
   tiles.forEach(function insertEmptyIcon(tile) {
     tile.src = './assets/empty.png';
@@ -108,8 +152,8 @@ function checkGameOver( coordinates ){
 }
 
 function addPlayerWin(){
+  game.giveWin()
   forfeitButton.disabled = true;
-  game.currentPlayer.wins++;
   players[game.currentPlayer.name] = game.currentPlayer.importantData();
   localStorage.setItem('players', JSON.stringify(players));
 }
@@ -117,15 +161,15 @@ function addPlayerWin(){
 function forfeit(showAnimation){
   game.switchCurrentPlayer();
   addPlayerWin();
-  clearBoard();
-  updatePlayerWinsDisplay();
   if (showAnimation){
     winAnimation();
     window.setTimeout(winAnimationReset, 2400);
   }
+  clearBoard();
+  updatePlayerWinsDisplay();
 }
 function clearScores(){
-  for (var player of [game.player1, game.player2] ){
+  for (var player of [game.p1, game.p2] ){
     player.eraseWins();
     players[player.name] = player.importantData();
   }
@@ -190,6 +234,6 @@ function setButtonStatus(){
 }
 
 function updatePlayerWinsDisplay(){
-  playerNames[0].innerText = `${game.player1.name} wins: ${game.player1.wins}`;
-  playerNames[1].innerText = `${game.player2.name} wins: ${game.player2.wins}`;
+  playerNames[0].innerText = `${game.p1.name} wins: ${game.p1.wins}`;
+  playerNames[1].innerText = `${game.p2.name} wins: ${game.p2.wins}`;
 }
