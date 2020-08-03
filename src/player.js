@@ -1,9 +1,10 @@
 class Player{
-  constructor(symbol, icon, name, bgClass, fontClass) {
+  constructor(symbol, icon, name, bgClass, fontClass, playerType) {
     this.symbol = symbol;
     this.icon = icon;
     this.bgClass = bgClass;
     this.fontClass = fontClass;
+    this.playerType = playerType || 'human';
     this._name = '';
     Object.defineProperty( this, 'name', {
       get() {

@@ -7,7 +7,7 @@ class Game{
     ];
     this.p1 = new Player('x', './assets/ruby.png', (p1Name || 'Ruby Player'), 'ruby-bg', 'ruby-font');
     this.p2 = new Player('o', './assets/js-icon.webp', (p2Name || 'JS Player'), 'js-bg', 'js-font');
-    this.currentPlayer = this.randomPlayer( [this.p1, this.p2] );
+    this.currentPlayer = this.randomElementFromArray( [this.p1, this.p2] );
     this.p1.opponent = this.p2;
     this.p2.opponent = this.p1;
     this.inARowToWin = inARowToWin || 3;
@@ -20,19 +20,9 @@ class Game{
     this.turns = 0;
   };
 
-  newGame() {
-    this.board = [
-      ['','',''],
-      ['','',''],
-      ['','','']
-    ];
-    this.currentPlayer = this.randomPlayer( [this.p1, this.p2] );
-    this.turns = 0;
-  };
-
-  randomPlayer(playerList) {
-    var randomIndex = [ Math.floor( Math.random() * playerList.length ) ];
-    return playerList[randomIndex];
+  randomElementFromArray(array) {
+    var randomIndex = [ Math.floor( Math.random() * array.length ) ];
+    return array[randomIndex];
   };
 
   tileIsEmpty(xy) {
@@ -84,6 +74,18 @@ class Game{
   isEmpty() {
     return this.turns === 0;
   };
+
+  randomOpenTile(){
+    var openTiles = []
+    for( var row = 0; row < this.board.length; row++ ) {
+      for( var col = 0; col < this.board[row].length; col++) {
+        if ( this.board[row][col] === '' ) {
+          openTiles.push([row, col])
+        }
+      }
+    }
+    return this.randomElementFromArray(openTiles);
+  }
 
   right(xy) {
     return [ xy[0], (xy[1] + 1) ];
