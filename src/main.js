@@ -47,6 +47,8 @@ p1AI.addEventListener('click', ifAIButtonCreateGame);
 p2AI.addEventListener('click', ifAIButtonCreateGame);
 p1AIStop.addEventListener('click', toggleAutoRun);
 p2AIStop.addEventListener('click', toggleAutoRun);
+p1Step.addEventListener('click', takeAITurn);
+p2Step.addEventListener('click', takeAITurn);
 
 function toggleAutoRun(){
   var isLeft = event.target.closest('section').dataset.side === 'left';
@@ -83,22 +85,22 @@ function toggleForm(event) {
 function ifEnterAttemptChangeName(event) {
   if (event.key === 'Enter'){
     var isLeft = event.target.closest('section').dataset.side === 'left';
-    attempChangeName(isLeft);
+    attempChangeName(isLeft, event);
   }
 };
 
-function attempChangeName(isLeft){
+function attempChangeName(isLeft, event){
   var userText = ( isLeft ) ? p1nameInput.value : p2nameInput.value;
   if ( isNotTooLong(isLeft, userText ) && notCurrentlyInUse(isLeft, userText ) ) {
-    changeName(userText, isLeft);
+    changeName(userText, isLeft, event);
   }
 }
 
-function changeName(userText, isLeft){
-  var p1Name = (isLeft) ? userText : game.p1.name;
-  var p2Name = (isLeft) ? game.p2.name : userText;
-  startNewGame( p1Name, p2Name, 'human', 'human' );
-  clearInputs();
+function changeName(userText, isLeft, event){
+  game.p1.name = (isLeft) ? userText : game.p1.name;
+  game.p2.name = (isLeft) ? game.p2.name : userText;
+  updatePlayerWinsDisplay();
+  toggleForm(event);
 }
 
 function notCurrentlyInUse(isLeft, name) {

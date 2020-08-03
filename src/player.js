@@ -7,15 +7,16 @@ class Player{
     this.type = dataObj.type;
     this.autoRun = dataObj.autoRun;
     this._name = dataObj.name;
+    this._playerData;
     Object.defineProperty( this, 'name', {
       get() {
         return this._name.toLowerCase();
       },
       set(name) {
         this._name = name;
+        this._playerData =  this.retrievePDFromStorage()
       }
     });
-    this._playerData =  this.retrievePDFromStorage();
     Object.defineProperty( this, 'wins', {
       get() {
         return this._playerData.wins;
