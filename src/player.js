@@ -33,17 +33,29 @@ class Player{
         this.savePDToStorage();
       }
     });
+    Object.defineProperty( this, 'ties', {
+      get() {
+        return this._playerData.ties;
+      },
+      set(num) {
+        this._playerData.ties = num;
+        this.savePDToStorage();
+      }
+    });
   };
 
   stringifyImportantData() {
     return JSON.stringify({
       wins: this.wins,
-      games: this.games
+      games: this.games,
+      ties: this.ties
     });
   };
 
   eraseWins() {
     this.wins = 0;
+    this.ties = 0;
+    this.games = 0;
   };
 
   savePDToStorage() {
@@ -52,6 +64,6 @@ class Player{
 
   retrievePDFromStorage() {
     var memory = JSON.parse( localStorage.getItem( this.name ) );
-    return (memory) ? memory : { wins: 0, games: 0 };
+    return (memory) ? memory : { wins: 0, games: 0, ties: 0 };
   }
 };

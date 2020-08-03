@@ -166,6 +166,7 @@ function checkGameOver( coordinates ) {
     addPlayerWin();
     winAnimation(game.currentPlayer);
   } else if (game.turns >= 9) {
+    game.giveTie();
     tieAnimation();
   } else {
     getNextPlayer();

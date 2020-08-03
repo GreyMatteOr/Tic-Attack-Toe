@@ -72,6 +72,11 @@ class Game{
     return 1 + this.numInARow( direction(xy), direction );
   };
 
+  giveTie(){
+    this.p1.ties++;
+    this.p2.ties++;
+  }
+
   giveWin() {
     this.currentPlayer.wins++;
   };
