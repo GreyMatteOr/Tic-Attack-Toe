@@ -7,8 +7,8 @@ var forfeitButton = document.querySelector('.forfeit');
 var clearButton = document.querySelector('.clear');
 var p1ChangeName = document.querySelector('#section-left>button');
 var p2ChangeName = document.querySelector('#section-right>button');
-var p1nameInput = document.querySelector('#section-left>input');
-var p2nameInput = document.querySelector('#section-right>input');
+var p1nameInput = document.querySelector('#section-left input');
+var p2nameInput = document.querySelector('#section-right input');
 var p1Anon = document.querySelector('#section-left .anonymous');
 var p2Anon = document.querySelector('#section-right .anonymous');
 var p1AI = document.querySelector('#section-left .AI');
@@ -77,7 +77,7 @@ function toggleForm(event) {
   var node = (isLeft) ? p1ChangeName : p2ChangeName
   var toggleText = (node.innerText === 'Change') ? 'hide' : 'Change';
   node.innerText = toggleText;
-  document.querySelector(`${ section } input`).classList.toggle('hidden');
+  document.querySelector(`${ section } .input-flex`).classList.toggle('hidden');
   document.querySelector(`${ section } .anonymous`).classList.toggle('hidden');
   document.querySelector(`${ section } .AI`).classList.toggle('hidden')
 };

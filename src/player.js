@@ -6,17 +6,17 @@ class Player{
     this.fontClass = fontClass;
     this.type = dataObj.type;
     this.autoRun = dataObj.autoRun;
-    this._name = dataObj.name;
-    this._playerData;
+    this._playerData = this.retrievePDFromStorage();
     Object.defineProperty( this, 'name', {
       get() {
         return this._name.toLowerCase();
       },
       set(name) {
         this._name = name;
-        this._playerData =  this.retrievePDFromStorage()
+        this._playerData =  this.retrievePDFromStorage();
       }
     });
+    this.name = dataObj.name;
     Object.defineProperty( this, 'wins', {
       get() {
         return this._playerData.wins;

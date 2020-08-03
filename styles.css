@@ -20,6 +20,7 @@ html, body, h1, h2, h3, h4, h5, h6, p {
 
 html{
   min-height: 100%;
+  display: flex;
 }
 
 body{
@@ -162,6 +163,7 @@ section{
   text-align: center;
   height: min-content;
   min-width: 17.5em;
+  max-width: 43em;
   margin: 1.5em;
   background: radial-gradient(circle, rgba(185,161,87,1) 25%, rgba(162,145,92,1) 60%, rgba(167,152,106,1) 89%);
 }
@@ -345,6 +347,10 @@ h1 img{
   width: 100%;
 }
 
+.input-flex{
+  display: flex;
+}
+
 .input{
   width: 100%;
   text-align: center;
@@ -352,6 +358,11 @@ h1 img{
   padding: .25em 0;
   position: relative;
   border-radius: .5em;
+}
+
+.input-flex>button{
+  padding: 0 .5em;
+  width: min-content;
 }
 
 .hidden{
