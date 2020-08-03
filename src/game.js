@@ -1,12 +1,12 @@
 class Game{
-  constructor(p1Name, p2Name, inARowToWin) {
+  constructor(p1Name, p2Name, p1Type, p2Type, inARowToWin) {
     this.board = [
       ['','',''],
       ['','',''],
       ['','','']
     ];
-    this.p1 = new Player('x', './assets/ruby.png', (p1Name || 'Ruby Player'), 'ruby-bg', 'ruby-font');
-    this.p2 = new Player('o', './assets/js-icon.webp', (p2Name || 'JS Player'), 'js-bg', 'js-font');
+    this.p1 = new Player('x', './assets/ruby.png', (p1Name || 'Ruby Player'), 'ruby-bg', 'ruby-font', p1Type);
+    this.p2 = new Player('o', './assets/js-icon.webp', (p2Name || 'JS Player'), 'js-bg', 'js-font', p2Type);
     this.currentPlayer = this.randomElementFromArray( [this.p1, this.p2] );
     this.p1.opponent = this.p2;
     this.p2.opponent = this.p1;
@@ -18,6 +18,9 @@ class Game{
       upRight: this.upRight
     };
     this.turns = 0;
+    if(this.currentPlayer.playerType !== 'human'){
+      this.takeTurn(this.randomOpenTile);
+    }
   };
 
   randomElementFromArray(array) {

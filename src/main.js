@@ -1,13 +1,3 @@
-// var players ={
-//   'Ruby Player': {
-//     name: 'Ruby Player',
-//     wins: 0
-//   },
-//   'JS Player': {
-//     name: 'JS Player',
-//     wins: 0
-//   }
-// };
 var game;
 
 var gameBoard = document.querySelector('#game-board');
@@ -119,10 +109,10 @@ function becomeAnonymous(event) {
   toggleForm(event);
 };
 
-function startNewGame(p1Name, p2Name) {
+function startNewGame(p1Name, p2Name, p1Type, p2Type) {
   var name1 = p1Name || ( (game) ? game.p1.name : 'Ruby Player' );
   var name2 = p2Name || ( (game) ? game.p2.name : 'JS Player' );
-  game = new Game( name1, name2 );
+  game = new Game( name1, name2, p1Type, p2Type );
   nextPlayerIcon.src = game.currentPlayer.icon;
   updatePlayerWinsDisplay();
 };
