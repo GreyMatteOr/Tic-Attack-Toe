@@ -7,8 +7,10 @@ var forfeitButton = document.querySelector('.forfeit');
 var clearButton = document.querySelector('.clear');
 var p1ChangeName = document.querySelector('#section-left>button');
 var p2ChangeName = document.querySelector('#section-right>button');
-var p1nameInput = document.querySelector('#section-left input');
-var p2nameInput = document.querySelector('#section-right input');
+var p1NameInput = document.querySelector('#section-left input');
+var p2NameInput = document.querySelector('#section-right input');
+var p1SubmitName = document.querySelector('#section-left>.input-flex>button');
+var p2SubmitName = document.querySelector('#section-right>.input-flex>button')
 var p1Anon = document.querySelector('#section-left .anonymous');
 var p2Anon = document.querySelector('#section-right .anonymous');
 var p1AI = document.querySelector('#section-left .AI');
@@ -39,8 +41,8 @@ forfeitButton.addEventListener('click', function forfeitAndShowAnimation() {
 clearButton.addEventListener('click', clearScores);
 p1ChangeName.addEventListener('click', toggleForm);
 p2ChangeName.addEventListener('click', toggleForm);
-p1nameInput.addEventListener('keydown', ifEnterAttemptChangeName);
-p2nameInput.addEventListener('keydown', ifEnterAttemptChangeName);
+p1NameInput.addEventListener('keydown', ifEnterAttemptChangeName);
+p2NameInput.addEventListener('keydown', ifEnterAttemptChangeName);
 p1Anon.addEventListener('click', becomeAnonymous);
 p2Anon.addEventListener('click', becomeAnonymous);
 p1AI.addEventListener('click', ifAIButtonCreateGame);
@@ -49,6 +51,13 @@ p1AIStop.addEventListener('click', toggleAutoRun);
 p2AIStop.addEventListener('click', toggleAutoRun);
 p1Step.addEventListener('click', takeAITurn);
 p2Step.addEventListener('click', takeAITurn);
+p1SubmitName.addEventListener('click', tryName);
+p2SubmitName.addEventListener('click', tryName);
+
+function tryName(event){
+  var isLeft = event.target.closest('section').dataset.side === 'left';
+  attempChangeName(isLeft, event);
+}
 
 function toggleAutoRun(){
   var isLeft = event.target.closest('section').dataset.side === 'left';
@@ -84,13 +93,12 @@ function toggleForm(event) {
 
 function ifEnterAttemptChangeName(event) {
   if (event.key === 'Enter'){
-    var isLeft = event.target.closest('section').dataset.side === 'left';
-    attempChangeName(isLeft, event);
+    tryName(event);
   }
 };
 
 function attempChangeName(isLeft, event){
-  var userText = ( isLeft ) ? p1nameInput.value : p2nameInput.value;
+  var userText = ( isLeft ) ? p1NameInput.value : p2NameInput.value;
   if ( isNotTooLong(isLeft, userText ) && notCurrentlyInUse(isLeft, userText ) ) {
     changeName(userText, isLeft, event);
   }
@@ -130,8 +138,8 @@ function flashWarning(isLeft, warningText){
 }
 
 function clearInputs() {
-  p1nameInput.value = '';
-  p2nameInput.value = '';
+  p1NameInput.value = '';
+  p2NameInput.value = '';
 };
 
 function becomeAnonymous(event) {
