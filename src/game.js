@@ -87,6 +87,49 @@ class Game{
     return this.randomElementFromArray(openTiles);
   }
 
+  findWinningMove(){
+    var lines = [
+      [[0,0],[0,1],[0,2]],
+      [[1,0],[1,1],[1,2]],
+      [[2,0],[2,1],[2,2]],
+      [[0,0],[1,0],[2,0]],
+      [[0,1],[1,1],[2,1]],
+      [[0,2],[1,2],[2,2]],
+      [[0,0],[1,1],[2,2]],
+      [[0,2],[1,1],[2,0]]
+    ];
+    for( var player of [this.p1, this.p2] ){
+      for( var line of lines ) {
+        var symbolsArr = this.getEachSymbol(line);
+        var win = this.hasAWinningPlay(symbolsArr);
+        if( win !== -1 ) {
+          return line[win];
+        }
+      }
+    }
+    return false;
+  }
+
+  getEachSymbol(line) {
+    var symbols = [];
+    for( var tile of line ){
+      symbols.push( this.board[ tile[0] ] [tile[1] ] );
+    }
+    return symbols;
+  }
+
+  hasAWinningPlay(symbolArr){
+    var count = {};
+    for (var i = 0; i < symbolArr.length; i++){
+      count[ symbolArr[i] ] = count[ symbolArr[i] ] ? count[ symbolArr[i] ] + 1 : 1;
+    }
+    if( count[this.p1.symbol] >= (this.inARowToWin - 1) ||
+        count[this.p2.symbol] >= (this.inARowToWin - 1)) {
+      return symbolArr.indexOf('');
+    }
+    return -1;
+  }
+
   right(xy) {
     return [ xy[0], (xy[1] + 1) ];
   };
