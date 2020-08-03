@@ -1,12 +1,12 @@
 class Game{
-  constructor(p1Name, p2Name, p1Type, p2Type, inARowToWin) {
+  constructor(p1Obj, p2Obj, inARowToWin) {
     this.board = [
       ['','',''],
       ['','',''],
       ['','','']
     ];
-    this.p1 = new Player('x', './assets/ruby.png', (p1Name || 'Ruby Player'), 'ruby-bg', 'ruby-font', p1Type);
-    this.p2 = new Player('o', './assets/js-icon.webp', (p2Name || 'JS Player'), 'js-bg', 'js-font', p2Type);
+    this.p1 = new Player('x', './assets/ruby.png', p1Obj, 'ruby-bg', 'ruby-font', p1Obj.type);
+    this.p2 = new Player('o', './assets/js-icon.webp', p2Obj, 'js-bg', 'js-font');
     this.currentPlayer = this.randomElementFromArray( [this.p1, this.p2] );
     this.p1.opponent = this.p2;
     this.p2.opponent = this.p1;

@@ -13,6 +13,8 @@ var p1Anon = document.querySelector('#section-left .anonymous');
 var p2Anon = document.querySelector('#section-right .anonymous');
 var p1AI = document.querySelector('#section-left .AI');
 var p2AI = document.querySelector('#section-right .AI');
+var p1AIStop = document.querySelector('#section-left .stop')
+var p2AIStop = document.querySelector('#section-right .stop')
 var kablam = document.querySelector('#kablam');
 var exclaim = document.querySelector('#exclaim-win');
 var overlay = document.querySelector('.overlay');
@@ -41,6 +43,15 @@ p1Anon.addEventListener('click', becomeAnonymous);
 p2Anon.addEventListener('click', becomeAnonymous);
 p1AI.addEventListener('click', ifAIButtonCreateGame);
 p2AI.addEventListener('click', ifAIButtonCreateGame);
+p1AIStop.addEventListener('click', toggleAutoRun);
+p2AIStop.addEventListener('click', toggleAutoRun);
+
+function toggleAutoRun(){
+  var isLeft = event.target.closest('section').dataset.side === 'left';
+  ( (isLeft) ? game.p1 : game.p2 ).toggleAutoRun();
+  event.target.innerText = ( event.target.innerText === 'run=manual' ) ? 'run=auto' : 'run=manual';
+  tryAITurnLoop();
+}
 
 function ifAIButtonCreateGame(event){
   var isLeft = event.target.closest('section').dataset.side === 'left';
@@ -52,7 +63,7 @@ function ifAIButtonCreateGame(event){
     p1Type: (isLeft) ?  type: game.p1.type,
     p2Type: (isLeft) ? game.p2.type : type
   }
-  startNewGame( argsObj.p1Name, argsObj.p2Name, argsObj.p1Type, argsObj.p2Type )
+  startNewGame( argsObj.p1Name, argsObj.p2Name, argsObj.p1Type, argsObj.p2Type );
 }
 
 function toggleForm(event) {
@@ -127,22 +138,34 @@ function becomeAnonymous(event) {
 };
 
 function startNewGame(p1Name, p2Name, p1Type, p2Type) {
-  var type1 = p1Type || ( (game) ? game.p1.type : 'human' );
-  var type2 = p2Type || ( (game) ? game.p2.type : 'human' );
-  game = new Game( p1Name, p2Name, type1, type2);
+  var p1Obj = {
+     name : p1Name || ( (game) ? game.p1.name : 'Ruby Player' ),
+     type : p1Type || ( (game) ? game.p1.type : 'human' ),
+     autoRun : (game) ? game.p1.autoRun : true
+   }
+  var p2Obj = {
+    name : p2Name || ( (game) ? game.p2.name : 'JS Player' ),
+    type : p2Type || ( (game) ? game.p2.type : 'human' ),
+    autoRun : (game) ? game.p2.autoRun : true
+  }
+  game = new Game( p1Obj, p2Obj);
   nextPlayerIcon.src = game.currentPlayer.icon;
   updatePlayerWinsDisplay();
   tryAITurnLoop()
 };
 
 function tryAITurnLoop() {
-  if( ( game.currentPlayer.type !== 'human' ) && ( game.turns < 9 ) ) {
-    var xy = game.randomOpenTile();
-    game.takeTurn( xy );
-    refreshDisplay();
-    checkGameOver( xy );
+  if( ( game.currentPlayer.isAutoAI() ) && ( game.turns < 9 ) ) {
+    takeAITurn();
   }
   setButtonStatus();
+}
+
+function takeAITurn(){
+  var xy = game.randomOpenTile();
+  game.takeTurn( xy );
+  refreshDisplay();
+  checkGameOver( xy );
 }
 
 function clearBoard() {
@@ -284,7 +307,15 @@ function setButtonStatus() {
   for ( var node of document.querySelectorAll('.if-game-dont-show') ) {
     node.classList.add('hidden');
   }
+  ifNotHumanDisplayStop()
 };
+
+function ifNotHumanDisplayStop(){
+  p1AIStop.innerText = (game.p1.autoRun) ? 'run=auto' : 'run=manual';
+  p1AIStop.classList[(game.p1.type === 'human') ? 'add' : 'remove']('hidden');
+  p2AIStop.innerText = (game.p2.autoRun) ? 'run=auto' : 'run=manual';
+  p2AIStop.classList[(game.p2.type === 'human') ? 'add' : 'remove']('hidden');
+}
 
 function updatePlayerWinsDisplay() {
   var doNotShowScoreP1 = (game.p1.name === 'ruby player' || game.p1.name === 'js player');

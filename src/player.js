@@ -1,11 +1,12 @@
 class Player{
-  constructor(symbol, icon, name, bgClass, fontClass, type) {
+  constructor(symbol, icon, dataObj, bgClass, fontClass) {
     this.symbol = symbol;
     this.icon = icon;
     this.bgClass = bgClass;
     this.fontClass = fontClass;
-    this.type = type;
-    this._name = name;
+    this.type = dataObj.type;
+    this.autoRun = dataObj.autoRun;
+    this._name = dataObj.name;
     Object.defineProperty( this, 'name', {
       get() {
         return this._name.toLowerCase();
@@ -65,5 +66,13 @@ class Player{
   retrievePDFromStorage() {
     var memory = JSON.parse( localStorage.getItem( this.name ) );
     return (memory) ? memory : { wins: 0, games: 0, ties: 0 };
+  }
+
+  isAutoAI() {
+    return ( this.type !== 'human' ) && this.autoRun;
+  }
+
+  toggleAutoRun(){
+    this.autoRun = !this.autoRun;
   }
 };
