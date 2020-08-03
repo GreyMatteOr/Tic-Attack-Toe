@@ -62,7 +62,7 @@ function tryName(event){
 function toggleAutoRun(){
   var isLeft = event.target.closest('section').dataset.side === 'left';
   ( (isLeft) ? game.p1 : game.p2 ).toggleAutoRun();
-  event.target.innerText = ( event.target.innerText === 'run=manual' ) ? 'run=auto' : 'run=manual';
+  event.target.innerText = ( event.target.innerText === 'manual' ) ? 'run=auto' : 'manual';
   tryAITurnLoop();
 }
 
@@ -322,9 +322,9 @@ function setButtonStatus() {
 };
 
 function ifNotHumanDisplayStop(){
-  p1AIStop.innerText = (game.p1.autoRun) ? 'run=auto' : 'run=manual';
+  p1AIStop.innerText = (game.p1.autoRun) ? 'run=auto' : 'manual';
   p1AIStop.classList[ (game.p1.type === 'human') ? 'add' : 'remove' ]( 'hidden' );
-  p2AIStop.innerText = (game.p2.autoRun) ? 'run=auto' : 'run=manual';
+  p2AIStop.innerText = (game.p2.autoRun) ? 'run=auto' : 'manual';
   p2AIStop.classList[ (game.p2.type === 'human') ? 'add' : 'remove' ]( 'hidden' );
   ifNotAutoDisplayStep();
 }
