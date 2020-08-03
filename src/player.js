@@ -1,11 +1,11 @@
 class Player{
-  constructor(symbol, icon, name, bgClass, fontClass, playerType) {
+  constructor(symbol, icon, name, bgClass, fontClass, type) {
     this.symbol = symbol;
     this.icon = icon;
     this.bgClass = bgClass;
     this.fontClass = fontClass;
-    this.playerType = playerType || 'human';
-    this._name = '';
+    this.type = type;
+    this._name = name;
     Object.defineProperty( this, 'name', {
       get() {
         return this._name.toLowerCase();
@@ -14,7 +14,6 @@ class Player{
         this._name = name;
       }
     });
-    this.name = name;
     this._playerData =  this.retrievePDFromStorage();
     Object.defineProperty( this, 'wins', {
       get() {

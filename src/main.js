@@ -44,16 +44,15 @@ p2AI.addEventListener('click', ifAIButtonCreateGame);
 
 function ifAIButtonCreateGame(event){
   var isLeft = event.target.closest('section').dataset.side === 'left';
-  var playerType = event.target.dataset.ai;
-  var nameIndex = ['ez', 'med', 'hard'].indexOf(playerType);
+  var type = event.target.dataset.ai;
+  var nameIndex = ['ez', 'med', 'hard'].indexOf(type);
   var argsObj= {
     p1Name: (isLeft) ? ['Cole', 'Sylva', 'Rube Goldberg'][nameIndex] : game.p1.name,
     p2Name: (isLeft) ? game.p2.name : ['Chip', 'Mouse', 'Skynet'][nameIndex] ,
-    p1Type: (isLeft) ?  playerType: 'human',
-    p2Type: (isLeft) ? 'human' : playerType
+    p1Type: (isLeft) ?  type: game.p1.type,
+    p2Type: (isLeft) ? game.p2.type : type
   }
   startNewGame( argsObj.p1Name, argsObj.p2Name, argsObj.p1Type, argsObj.p2Type )
-  refreshDisplay();
 }
 
 function toggleForm(event) {
@@ -128,12 +127,23 @@ function becomeAnonymous(event) {
 };
 
 function startNewGame(p1Name, p2Name, p1Type, p2Type) {
-  var name1 = p1Name || ( (game) ? game.p1.name : 'Ruby Player' );
-  var name2 = p2Name || ( (game) ? game.p2.name : 'JS Player' );
-  game = new Game( name1, name2, p1Type, p2Type );
+  var type1 = p1Type || ( (game) ? game.p1.type : 'human' );
+  var type2 = p2Type || ( (game) ? game.p2.type : 'human' );
+  game = new Game( p1Name, p2Name, type1, type2);
   nextPlayerIcon.src = game.currentPlayer.icon;
   updatePlayerWinsDisplay();
+  tryAITurnLoop()
 };
+
+function tryAITurnLoop() {
+  if( ( game.currentPlayer.type !== 'human' ) && ( game.turns < 9 ) ) {
+    var xy = game.randomOpenTile();
+    game.takeTurn( xy );
+    refreshDisplay();
+    checkGameOver( xy );
+  }
+  setButtonStatus();
+}
 
 function clearBoard() {
   startNewGame();
@@ -194,6 +204,7 @@ function checkGameOver( coordinates ) {
   } else {
     getNextPlayer();
     setButtonStatus();
+    tryAITurnLoop();
   }
 };
 

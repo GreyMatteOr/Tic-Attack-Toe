@@ -18,14 +18,10 @@ class Game{
       upRight: this.upRight
     };
     this.turns = 0;
-    if(this.currentPlayer.playerType !== 'human'){
-      this.takeTurn(this.randomOpenTile());
-      this.switchCurrentPlayer();
-    }
   };
 
   randomElementFromArray(array) {
-    var randomIndex = [ Math.floor( Math.random() * array.length ) ];
+    var randomIndex =  Math.floor( Math.random() * array.length );
     return array[randomIndex];
   };
 
