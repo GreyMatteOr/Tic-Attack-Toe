@@ -11,6 +11,8 @@ var p1nameInput = document.querySelector('#section-left>input');
 var p2nameInput = document.querySelector('#section-right>input');
 var p1Anon = document.querySelector('#section-left .anonymous');
 var p2Anon = document.querySelector('#section-right .anonymous');
+var p1AI = document.querySelector('#section-left .AI');
+var p2AI = document.querySelector('#section-right .AI');
 var kablam = document.querySelector('#kablam');
 var exclaim = document.querySelector('#exclaim-win');
 var overlay = document.querySelector('.overlay');
@@ -37,10 +39,26 @@ p1nameInput.addEventListener('keydown', ifEnterAttemptChangeName);
 p2nameInput.addEventListener('keydown', ifEnterAttemptChangeName);
 p1Anon.addEventListener('click', becomeAnonymous);
 p2Anon.addEventListener('click', becomeAnonymous);
+p1AI.addEventListener('click', ifAIButtonCreateGame);
+p2AI.addEventListener('click', ifAIButtonCreateGame);
+
+function ifAIButtonCreateGame(event){
+  var isLeft = event.target.closest('section').dataset.side === 'left';
+  var playerType = event.target.dataset.ai;
+  var nameIndex = ['ez', 'med', 'hard'].indexOf(playerType);
+  var argsObj= {
+    p1Name: (isLeft) ? ['Cole', 'Sylva', 'Rube Goldberg'][nameIndex] : game.p1.name,
+    p2Name: (isLeft) ? game.p2.name : ['Chip', 'Mouse', 'Skynet'][nameIndex] ,
+    p1Type: (isLeft) ?  playerType: 'human',
+    p2Type: (isLeft) ? 'human' : playerType
+  }
+  startNewGame( argsObj.p1Name, argsObj.p2Name, argsObj.p1Type, argsObj.p2Type )
+  refreshDisplay();
+}
 
 function toggleForm(event) {
   clearInputs();
-  var isLeft = event.target.dataset.side === 'left';
+  var isLeft = event.target.closest('section').dataset.side === 'left';
   var section = (isLeft) ? '#section-left' : '#section-right';
   var node = (isLeft) ? p1ChangeName : p2ChangeName
   var toggleText = (node.innerText === 'Change') ? 'back!' : 'Change';
@@ -52,7 +70,7 @@ function toggleForm(event) {
 
 function ifEnterAttemptChangeName(event) {
   if (event.key === 'Enter'){
-    var isLeft = ( event.target.dataset.side === 'left' );
+    var isLeft = event.target.closest('section').dataset.side === 'left';
     attempChangeName(isLeft);
   }
 };
@@ -103,7 +121,7 @@ function clearInputs() {
 };
 
 function becomeAnonymous(event) {
-  isLeft = ( event.target.dataset.side === 'left' );
+  var isLeft = event.target.closest('section').dataset.side === 'left';
   var names = (isLeft) ? [ 'Ruby Player', game.p2.name ] : [ game.p1.name, 'JS Player' ];
   startNewGame( names[0], names[1] );
   toggleForm(event);
@@ -119,12 +137,7 @@ function startNewGame(p1Name, p2Name, p1Type, p2Type) {
 
 function clearBoard() {
   startNewGame();
-  var tiles = document.querySelectorAll('.tile');
-  tiles.forEach(function insertEmptyIcon(tile) {
-    tile.src = './assets/empty.png';
-    tile.classList.add('empty');
-    tile.classList.remove('js-bg', 'ruby-bg');
-  });
+  refreshDisplay();
   setButtonStatus();
 };
 
@@ -139,15 +152,35 @@ function ifEmptyThenFill(tile) {
   var row = 'tmb'.indexOf(tile.id[0]);
   var col = 'lcr'.indexOf(tile.id[1]);
   if ( game.tileIsEmpty( [row, col] ) ) {
-    fill(tile);
+    fill(tile, game.currentPlayer);
     game.takeTurn( [row, col] );
     checkGameOver( [row, col] );
   }
 };
 
-function fill(tile) {
-  tile.src = game.currentPlayer.icon;
-  tile.classList.add(game.currentPlayer.colorClass);
+function refreshDisplay(){
+  var tiles = document.querySelectorAll('.tile');
+  tiles.forEach(function insertEmptyIcon(tile) {
+    var row = 'tmb'.indexOf(tile.id[0]);
+    var col = 'lcr'.indexOf(tile.id[1]);
+    if(game.board[row][col] === ''){
+      empty(tile);
+    } else {
+      var player = (game.p1.symbol === game.board[row][col]) ? game.p1 : game.p2;
+      fill(tile, player)
+    }
+  });
+}
+
+function empty(tile){
+  tile.src = './assets/empty.png';
+  tile.classList.add('empty');
+  tile.classList.remove('js-bg', 'ruby-bg');
+}
+
+function fill(tile, player) {
+  tile.src = player.icon;
+  tile.classList.add(player.colorClass);
   tile.classList.remove('empty');
 };
 

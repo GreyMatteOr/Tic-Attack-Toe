@@ -19,7 +19,8 @@ class Game{
     };
     this.turns = 0;
     if(this.currentPlayer.playerType !== 'human'){
-      this.takeTurn(this.randomOpenTile);
+      this.takeTurn(this.randomOpenTile());
+      this.switchCurrentPlayer();
     }
   };
 
