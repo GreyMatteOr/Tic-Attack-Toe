@@ -47,8 +47,8 @@ p1Anon.addEventListener('click', becomeAnonymous);
 p2Anon.addEventListener('click', becomeAnonymous);
 p1AI.addEventListener('click', ifAIButtonCreateGame);
 p2AI.addEventListener('click', ifAIButtonCreateGame);
-p1AIStop.addEventListener('click', toggleAutoRun);
-p2AIStop.addEventListener('click', toggleAutoRun);
+p1AIStop.addEventListener('click', toggleAutoAI);
+p2AIStop.addEventListener('click', toggleAutoAI);
 p1Step.addEventListener('click', takeAITurn);
 p2Step.addEventListener('click', takeAITurn);
 p1SubmitName.addEventListener('click', tryName);
@@ -59,7 +59,7 @@ function tryName(event){
   attempChangeName(isLeft, event);
 }
 
-function toggleAutoRun(){
+function toggleAutoAI(){
   var isLeft = event.target.closest('section').dataset.side === 'left';
   ( (isLeft) ? game.p1 : game.p2 ).toggleAutoRun();
   event.target.innerText = ( event.target.innerText === 'manual' ) ? 'run=auto' : 'manual';
@@ -331,7 +331,7 @@ function ifNotHumanDisplayStop(){
 
 function ifNotAutoDisplayStep() {
   p1Step.classList[ (game.p1.autoRun || game.p1.type === 'human') ? 'add' : 'remove' ]( 'hidden' );
-  p2Step.classList[ (game.p2.autoRun || game.p1.type === 'human' ) ? 'add' : 'remove' ]( 'hidden' );
+  p2Step.classList[ (game.p2.autoRun || game.p2.type === 'human' ) ? 'add' : 'remove' ]( 'hidden' );
 }
 
 function updatePlayerWinsDisplay() {

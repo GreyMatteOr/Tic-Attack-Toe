@@ -249,7 +249,6 @@ h1 img{
   font-size: 4em;
   transition-property: color, box-shadow, text-shadow, opacity, z-index;
   transition-duration: .6s;
-  /* padding-bottom: .75em; */
 }
 
 .show-exclaim{
@@ -350,6 +349,7 @@ h1 img{
 
 .input-flex{
   display: flex;
+  padding: 0;
 }
 
 .input{
