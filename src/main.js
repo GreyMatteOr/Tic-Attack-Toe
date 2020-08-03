@@ -107,10 +107,6 @@ function flashWarning(isLeft, warningText){
   }, 1200);
 }
 
-function warningReset(){
-
-}
-
 function clearInputs() {
   p1nameInput.value = '';
   p2nameInput.value = '';
@@ -154,6 +150,7 @@ function ifEmptyThenFill(tile) {
   var col = 'lcr'.indexOf(tile.id[1]);
   if ( game.tileIsEmpty( [row, col] ) ) {
     fill(tile);
+    game.takeTurn( [row, col] );
     checkGameOver( [row, col] );
   }
 };

@@ -37,11 +37,18 @@ class Game{
 
   tileIsEmpty(xy) {
     if ( this.board[ xy[0] ][ xy[1] ] === '' ) {
-      this.board[ xy[0] ][ xy[1] ] = this.currentPlayer.symbol;
-      this.turns++;
       return true;
     }
     return false;
+  };
+
+  takeTurn(xy) {
+    this.board[ xy[0] ][ xy[1] ] = this.currentPlayer.symbol;
+    if (this.turns === 0){
+      this.p1.games++;
+      this.p2.games++;
+    }
+    this.turns++;
   };
 
   switchCurrentPlayer() {

@@ -14,22 +14,31 @@ class Player{
       }
     });
     this.name = name;
-    this._wins =  this.retrieveWinsFromStorage();
+    this._playerData =  this.retrievePDFromStorage();
     Object.defineProperty( this, 'wins', {
       get() {
-        return this._wins;
+        return this._playerData.wins;
       },
       set(num) {
-        this._wins = num;
-        this.saveWinsToStorage();
+        this._playerData.wins = num;
+        this.savePDToStorage();
+      }
+    });
+    Object.defineProperty( this, 'games', {
+      get() {
+        return this._playerData.games;
+      },
+      set(num) {
+        this._playerData.games = num;
+        this.savePDToStorage();
       }
     });
   };
 
   stringifyImportantData() {
     return JSON.stringify({
-      name: this.name,
-      wins: this.wins
+      wins: this.wins,
+      games: this.games
     });
   };
 
@@ -37,12 +46,12 @@ class Player{
     this.wins = 0;
   };
 
-  saveWinsToStorage() {
+  savePDToStorage() {
     localStorage.setItem( this.name, this.stringifyImportantData() );
   };
 
-  retrieveWinsFromStorage() {
+  retrievePDFromStorage() {
     var memory = JSON.parse( localStorage.getItem( this.name ) );
-    return (memory) ? memory.wins : 0;
+    return (memory) ? memory : { wins: 0, games: 0 };
   }
 };
