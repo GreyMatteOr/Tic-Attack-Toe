@@ -15,6 +15,8 @@ var p1AI = document.querySelector('#section-left .AI');
 var p2AI = document.querySelector('#section-right .AI');
 var p1AIStop = document.querySelector('#section-left .stop')
 var p2AIStop = document.querySelector('#section-right .stop')
+var p1Step = document.querySelector('#section-left .step')
+var p2Step = document.querySelector('#section-right .step')
 var kablam = document.querySelector('#kablam');
 var exclaim = document.querySelector('#exclaim-win');
 var overlay = document.querySelector('.overlay');
@@ -71,7 +73,7 @@ function toggleForm(event) {
   var isLeft = event.target.closest('section').dataset.side === 'left';
   var section = (isLeft) ? '#section-left' : '#section-right';
   var node = (isLeft) ? p1ChangeName : p2ChangeName
-  var toggleText = (node.innerText === 'Change') ? 'back!' : 'Change';
+  var toggleText = (node.innerText === 'Change') ? 'hide' : 'Change';
   node.innerText = toggleText;
   document.querySelector(`${ section } input`).classList.toggle('hidden');
   document.querySelector(`${ section } .anonymous`).classList.toggle('hidden');
@@ -95,7 +97,7 @@ function attempChangeName(isLeft){
 function changeName(userText, isLeft){
   var p1Name = (isLeft) ? userText : game.p1.name;
   var p2Name = (isLeft) ? game.p2.name : userText;
-  startNewGame( p1Name, p2Name );
+  startNewGame( p1Name, p2Name, 'human', 'human' );
   clearInputs();
 }
 
@@ -133,8 +135,7 @@ function clearInputs() {
 function becomeAnonymous(event) {
   var isLeft = event.target.closest('section').dataset.side === 'left';
   var names = (isLeft) ? [ 'Ruby Player', game.p2.name ] : [ game.p1.name, 'JS Player' ];
-  startNewGame( names[0], names[1] );
-  toggleForm(event);
+  startNewGame( names[0], names[1], 'human', 'human' );
 };
 
 function startNewGame(p1Name, p2Name, p1Type, p2Type) {
@@ -312,9 +313,15 @@ function setButtonStatus() {
 
 function ifNotHumanDisplayStop(){
   p1AIStop.innerText = (game.p1.autoRun) ? 'run=auto' : 'run=manual';
-  p1AIStop.classList[(game.p1.type === 'human') ? 'add' : 'remove']('hidden');
+  p1AIStop.classList[ (game.p1.type === 'human') ? 'add' : 'remove' ]( 'hidden' );
   p2AIStop.innerText = (game.p2.autoRun) ? 'run=auto' : 'run=manual';
-  p2AIStop.classList[(game.p2.type === 'human') ? 'add' : 'remove']('hidden');
+  p2AIStop.classList[ (game.p2.type === 'human') ? 'add' : 'remove' ]( 'hidden' );
+  ifNotAutoDisplayStep();
+}
+
+function ifNotAutoDisplayStep() {
+  p1Step.classList[ (game.p1.autoRun || game.p1.type === 'human') ? 'add' : 'remove' ]( 'hidden' );
+  p2Step.classList[ (game.p2.autoRun || game.p1.type === 'human' ) ? 'add' : 'remove' ]( 'hidden' );
 }
 
 function updatePlayerWinsDisplay() {
