@@ -72,7 +72,19 @@ function startNewGame(p1Name, p2Name, p1Type, p2Type) {
     type : p2Type || ( (game) ? game.p2.type : 'human' ),
     autoRun : (game) ? game.p2.autoRun : true
   }
-  game = new Game( p1Obj, p2Obj);
+  var p1StyleObj = {
+    symbol: 'x',
+    icon: './assets/ruby.png',
+    bgClass: 'ruby-bg',
+    fontClass: 'ruby-font'
+  };
+  var p2StyleObj = {
+    symbol: 'o',
+    icon: './assets/js-icon.webp',
+    bgClass: 'js-bg',
+    fontClass: 'js-font'
+  };
+  game = new Game( p1Obj, p2Obj, p1StyleObj, p2StyleObj);
   nextPlayerIcon.src = game.currentPlayer.icon;
   updatePlayerWinsDisplay();
   tryAITurnLoop()
@@ -202,8 +214,7 @@ function clearInputs() {
 
 function becomeAnonymous(event) {
   var isLeft = event.target.closest('section').dataset.side === 'left';
-  var names = (isLeft) ? [ 'Ruby Player', game.p2.name ] : [ game.p1.name, 'JS Player' ];
-  startNewGame( names[0], names[1], 'human', 'human' );
+  changeName( ( (isLeft) ? 'Ruby Player' : 'JS Player' ), isLeft, event );
 };
 
 function ifTileAttemptTurn(event) {

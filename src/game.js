@@ -1,22 +1,10 @@
 class Game{
-  constructor(p1Obj, p2Obj, inARowToWin) {
+  constructor(p1Obj, p2Obj, p1StyleObj, p2StyleObj, inARowToWin) {
     this.board = [
       ['','',''],
       ['','',''],
       ['','','']
     ];
-    var p1StyleObj = {
-      symbol: 'x',
-      icon: './assets/ruby.png',
-      bgClass: 'ruby-bg',
-      fontClass: 'ruby-font'
-    };
-    var p2StyleObj = {
-      symbol: 'o',
-      icon: './assets/js-icon.webp',
-      bgClass: 'js-bg',
-      fontClass: 'js-font'
-    };
     this.p1 = new Player(p1StyleObj, p1Obj);
     this.p2 = new Player(p2StyleObj, p2Obj);
     this.currentPlayer = this.randomElementFromArray( [this.p1, this.p2] );
