@@ -104,7 +104,6 @@ class Game{
       adjacentSideTest = this.sideTileBy(playerTile);
     }
     while( adjacentCornerTest && this.getSymbol( adjacentCornerTest ) !== '') {
-      console.log(adjacentCornerTest)
       adjacentCornerTest = this.aCornerOnTheSameSideAs( adjacentSideTest );
     }
     return adjacentCornerTest;
@@ -114,47 +113,39 @@ class Game{
   }
 
   preventCornerStrat() {
-    console.log('prevent Corner!')
     if ( this.turns === 1 &&
          this.isACorner( this.findFilledSpaceThatMatches( this.currentPlayer.opponent.symbol ) ) ) {
       return [1,1];
     }
-    console.log('fail!')
+
     return false;
   }
 
   preventPin() {
-    console.log('prevent pin')
     if( !game.hasStarted() ){
       return false;
     }
     var enemyTile = this.findFilledSpaceThatMatches( this.currentPlayer.opponent.symbol );
-    console.log(`enemy : ${enemyTile}`)
     var tileOpposite = this.oppositeCornerTile(enemyTile);
-    console.log(`opposite: ${tileOpposite }`)
     if ( this.turns === 3 &&
      this.isACorner( enemyTile ) &&
      this.getSymbol( tileOpposite ) === this.currentPlayer.opponent.symbol ) {
       return this.sideTileBy(enemyTile);
     }
-    console.log('fail')
     return false;
   }
 
   oppositeCornerTile( coordinates ) {
-    console.log('opposite!')
     var height = this.board.length - 1 ;
     var width = this.board[coordinates[0]].length - 1;
     var row = coordinates[0];
     var col = coordinates[1];
     row += (coordinates[0] === 0) ? width : (-width);
     col += (coordinates[1] === 0) ? height : (-height)
-    console.log('fail!')
     return [row, col];
   }
 
   sideTileBy( coordinates ) {
-    console.log(`getting sideTileBy ${coordinates}`)
     var belowOrAbove = (coordinates[0] === 0) ?
                          [ coordinates[0] + 1, coordinates[1] ] :
                          [ coordinates[0] - 1, coordinates[1] ];
@@ -244,7 +235,6 @@ class Game{
   }
 
   findWinningMove() {
-    console.log('winning?')
     var lines = [
       [[0,0],[0,1],[0,2]],
       [[1,0],[1,1],[1,2]],
@@ -255,16 +245,15 @@ class Game{
       [[0,0],[1,1],[2,2]],
       [[0,2],[1,1],[2,0]]
     ];
-    for( var player of [this.currentPlayer, this.currentPlayer.opponent] ){
+    for( var player of [ this.currentPlayer, this.currentPlayer.opponent ] ){
       for( var line of lines ) {
         var symbolsArr = this.getEachSymbol(line);
-        var win = this.hasAWinningPlay(symbolsArr);
+        var win = this.hasAWinningPlay(symbolsArr, player.symbol);
         if( win !== -1 ) {
           return line[win];
         }
       }
     }
-    console.log('fail')
     return false;
   }
 
@@ -276,20 +265,15 @@ class Game{
     return symbols;
   }
 
-  hasAWinningPlay(symbolArr){
+  hasAWinningPlay(symbolArr, symbol){
     var count = {};
     for (var i = 0; i < symbolArr.length; i++){
       count[ symbolArr[i] ] = count[ symbolArr[i] ] ? count[ symbolArr[i] ] + 1 : 1;
     }
-    if( count[this.p1.symbol] >= (this.inARowToWin - 1) ||
-        count[this.p2.symbol] >= (this.inARowToWin - 1)) {
-      return symbolArr.indexOf('');
-    }
-    return -1;
+    return ( count[symbol] >= (this.inARowToWin - 1) ) ? symbolArr.indexOf('') : -1;
   }
 
   randomOpenTile(){
-    console.log('RANDOM')
     var openTiles = []
     for( var row = 0; row < this.board.length; row++ ) {
       for( var col = 0; col < this.board[row].length; col++) {
