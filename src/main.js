@@ -180,10 +180,10 @@ function takeAITurn(){
       'hard': 'winOrCornerStratOrTie'
     }
     var coordinates = game[ behavior[game.currentPlayer.type] ]();
+    game.takeTurn( coordinates );
+    refreshDisplay();
+    checkGameOver( coordinates );
   }
-  game.takeTurn( coordinates );
-  refreshDisplay();
-  checkGameOver( coordinates );
 }
 
 function clearBoard() {
