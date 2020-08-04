@@ -271,14 +271,20 @@ h1 img{
 
 .empty{
   transition: all .6s;
-  width: 90%;
+  background: inherit;
+  width: 100%;
+  height: auto;
   opacity: .25;
+  margin:auto;
 }
 
 .empty:hover{
-  width: 100%;
+  background-color:rgb(0, 0, 0, 0.40);
+  width: 80%;
   opacity: .6;
 }
+
+.placeholder
 
 .js-bg{
   background: radial-gradient(rgba(192,86,70,1) 0%, rgba(127,118,85,1) 50%, rgba(100,154,34,1) 100%);
