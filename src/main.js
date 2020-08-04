@@ -214,10 +214,10 @@ function refreshDisplay(){
   tiles.forEach(function insertEmptyIcon(tile) {
     var row = 'tmb'.indexOf(tile.id[0]);
     var col = 'lcr'.indexOf(tile.id[1]);
-    if(game.board[row][col] === ''){
+    if(game.getSymbol( [row, col] ) === ''){
       empty(tile);
     } else {
-      var player = (game.p1.symbol === game.board[row][col]) ? game.p1 : game.p2;
+      var player = (game.p1.symbol === game.getSymbol( [row, col] ) ) ? game.p1 : game.p2;
       fill(tile, player)
     }
   });

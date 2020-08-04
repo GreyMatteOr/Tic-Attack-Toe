@@ -26,6 +26,15 @@ class Game{
     this.turns = 0;
   };
 
+  getSymbol( coordinates ) {
+    if (
+     this.board[ coordinates[0] ] === undefined ||
+     this.board[ coordinates[0] ][ coordinates[1] ] === undefined) {
+      return false;
+    }
+    return this.board[ coordinates[0] ][ coordinates[1] ];
+   }
+
   randomElementFromArray(array) {
     var randomIndex =  Math.floor( Math.random() * array.length );
     return array[randomIndex];
@@ -60,9 +69,7 @@ class Game{
   };
 
   numInARow(coordinates, direction) {
-    if( this.board[ coordinates[0] ] === undefined ||
-        this.board[ coordinates[0] ][ coordinates[1] ] === undefined ||
-        this.board[ coordinates[0] ][ coordinates[1] ] !== this.currentPlayer.symbol ) {
+    if( this.getSymbol(coordinates) !== this.currentPlayer.symbol ) {
       return 0;
     }
     return 1 + this.numInARow( direction(coordinates), direction );
@@ -99,30 +106,24 @@ class Game{
   preventPin() {
     console.log('prevent pin')
     var enemyTile = this.findFilledSpaceThatMatches( this.currentPlayer.opponent.symbol );
+    var tileOpposite = this.oppositeCornerTile(enemyTile);
     if ( this.turns === 3 &&
      this.isACorner( enemyTile ) &&
-     this.oppositeCornerTileSymbol(enemyTile) === this.currentPlayer.opponent.symbol ) {
+     this.getSymbol( tileOpposite ) === this.currentPlayer.opponent.symbol ) {
       return this.sideTileBy(enemyTile);
     }
     console.log('fail')
     return false;
   }
 
-  oppositeCornerTileSymbol( coordinates ) {
+  oppositeCornerTile( coordinates ) {
     var height = this.board.length - 1 ;
     var width = this.board[coordinates[0]].length - 1;
     var row = coordinates[0];
     var col = coordinates[1];
     row += (coordinates[0] === 0) ? width : (-width);
     col += (coordinates[1] === 0) ? height : (-height)
-    if (
-     row < 0 ||
-     row > height ||
-     col < 0 ||
-     col > width) {
-      return false;
-    }
-    return this.board[row][col];
+    return this.getSymbol( [row, column] )
   }
 
   sideTileBy( coordinates ) {
@@ -180,9 +181,7 @@ class Game{
 
   removeFilledTiles( tileArray ) {
     for (var i = 0; i < tileArray.length; i++) {
-      var row = tileArray[i][0];
-      var col = tileArray[i][1];
-      if ( this.board[ row ][ col ] !== '' ) {
+      if ( this.getSymbol( tileArray[i] ) !== '' ) {
         tileArray.splice( i, 1 )
         i--;
       }
@@ -192,7 +191,7 @@ class Game{
   findFilledSpaceThatMatches( symbol ){
     for( var row = 0; row < this.board.length; row++ ) {
       for( var col = 0; col < this.board[row].length; col++ ) {
-        if ( this.board[ row ][ col ] === symbol ) {
+        if ( this.getSymbol( [row, col] ) === symbol ) {
           return [ row, col ];
         }
       }
@@ -231,7 +230,7 @@ class Game{
   getEachSymbol(line) {
     var symbols = [];
     for( var tile of line ){
-      symbols.push( this.board[ tile[0] ] [tile[1] ] );
+      symbols.push( this.getSymbol(tile) );
     }
     return symbols;
   }
@@ -253,7 +252,7 @@ class Game{
     var openTiles = []
     for( var row = 0; row < this.board.length; row++ ) {
       for( var col = 0; col < this.board[row].length; col++) {
-        if ( this.board[row][col] === '' ) {
+        if ( this.getSymbol( [row, col] ) === '' ) {
           openTiles.push([row, col])
         }
       }
