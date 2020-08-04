@@ -9,14 +9,26 @@
   </head>
   <body>
     <main>
-      <section class='ruby-font' id='section-left'>
+      <section class='ruby-font' id='section-left' data-side='left'>
         <div class="div-player-score">
           <img src="./assets/ruby.png" alt="Player 1 symbol">
           <h2>RUBY player</h2>
         </div>
-        <button class='fight-font ruby-font medium-font-size button change-player-button' data-side='left'>Change</button>
-        <input class ='fight-font hidden if-game-dont-show' placeholder="Enter Name" data-side='left'>
-        <button class='fight-font ruby-font medium-font-size button anonymous if-game-dont-show hidden' data-side='left'>anonymous</button>
+        <button class='fight-font ruby-font medium-font-size button change-player-button' >Change</button>
+        <div class="AI fight-font ruby-font medium-font-size if-game-dont-show">
+          <h2> AI</h2>
+          <button data-ai='ez'>EZ</button>
+          <button data-ai='med'>MED</button>
+          <button data-ai='hard'>HARD</button>
+        </div>
+        <button class='fight-font ruby-font medium-font-size button anonymous if-game-dont-show hidden'>anonymous</button>
+        <div class="input-flex hidden if-game-dont-show">
+          <input class ='input fight-font' placeholder="Enter Name">
+          <button class="input fight-font ruby-font">√</button>
+        </div>
+        <h4 class='invisible input'></h4>
+        <button class='fight-font ruby-font medium-font-size button stop hidden'>manual</button>
+        <button class='fight-font ruby-font medium-font-size button step hidden'>a.i. go!</button>
       </section>
 
       <section id='section-middle'>
@@ -30,7 +42,7 @@
             <img class='top right tile' id ='tr' src="" alt="Top Right tile"/>
             <img class='middle left tile' id ='ml' src="" alt="Middle Left tile"/>
             <img class='middle center tile' id ='mc' src="" alt="Middle Center tile"/>
-            <img class='middle center placeholder' src='./assets/ruby.png'>
+            <img class='middle center placeholder' src='./assets/empty.png'>
             <img class='middle right tile' id ='mr' src="" alt="Middle Right tile"/>
             <img class='bottom left tile' id ='bl' src="" alt="Bottom Left tile"/>
             <img class='bottom center tile' id ='bc' src="" alt="Bottom Center tile"/>
@@ -43,16 +55,27 @@
           </div>
       </section>
 
-      <section class='js-font' id='section-right'>
+      <section class='js-font' id='section-right' data-side='right'>
         <div class="div-player-score">
           <img src="./assets/js-icon.webp" alt="Player2 symbol">
           <h2> JS Player</h2>
         </div>
-        <button class='fight-font js-font medium-font-size button' data-side='right'>Change</button>
-        <input class='fight-font if-game-dont-show hidden' placeholder="Enter Name" data-side='right'>
-        <button class='fight-font js-font medium-font-size button hidden if-game-dont-show anonymous' data-side='right'>anonymous</button>
+        <button class='fight-font js-font medium-font-size button'>Change</button>
+        <div class="AI fight-font js-font medium-font-size if-game-dont-show">
+          <h2> AI</h2>
+          <button data-ai='ez'>EZ</button>
+          <button data-ai='med'>MED</button>
+          <button data-ai='hard'>HARD</button>
+        </div>
+        <button class='fight-font js-font medium-font-size button hidden if-game-dont-show anonymous'>anonymous</button>
+        <div class="input-flex hidden if-game-dont-show">
+          <input class ='input fight-font' placeholder="Enter Name">
+          <button class="input fight-font js-font">√</button>
+        </div>
+        <h4 class='invisible input'>TOO LONG</h4>
+        <button class='fight-font js-font medium-font-size button stop hidden' >manual</button>
+        <button class='fight-font js-font medium-font-size button step hidden'>a.i. go!</button>
       </section>
-
     </main>
   </body>
   <script src="./src/player.js"></script>

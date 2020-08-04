@@ -1,48 +1,79 @@
 class Player{
-  constructor(symbol, icon, name, bgClass, fontClass){
-    this.symbol = symbol;
-    this.icon = icon;
-    this.bgClass = bgClass;
-    this.fontClass = fontClass;
-    this._name = '';
+  constructor(styleObj, dataObj) {
+    this.symbol = styleObj.symbol;
+    this.icon = styleObj.icon;
+    this.bgClass = styleObj.bgClass;
+    this.fontClass = styleObj.fontClass;
+    this.type = dataObj.type;
+    this.autoRun = dataObj.autoRun;
+    this._playerData = this.retrievePDFromStorage();
     Object.defineProperty( this, 'name', {
       get() {
         return this._name.toLowerCase();
       },
       set(name) {
         this._name = name;
+        this._playerData =  this.retrievePDFromStorage();
       }
     });
-    this.name = name;
-    this._wins =  this.retrieveWinsFromStorage();
+    this.name = dataObj.name;
     Object.defineProperty( this, 'wins', {
       get() {
-        return this._wins;
+        return this._playerData.wins;
       },
-      set(num){
-        this._wins = num;
-        this.saveWinsToStorage();
+      set(num) {
+        this._playerData.wins = num;
+        this.savePDToStorage();
       }
     });
-  }
-
-  stringifyImportantData(){
-    return JSON.stringify({
-      name: this.name,
-      wins: this.wins
+    Object.defineProperty( this, 'games', {
+      get() {
+        return this._playerData.games;
+      },
+      set(num) {
+        this._playerData.games = num;
+        this.savePDToStorage();
+      }
+    });
+    Object.defineProperty( this, 'ties', {
+      get() {
+        return this._playerData.ties;
+      },
+      set(num) {
+        this._playerData.ties = num;
+        this.savePDToStorage();
+      }
     });
   };
 
-  eraseWins(){
+  stringifyImportantData() {
+    return JSON.stringify({
+      wins: this.wins,
+      games: this.games,
+      ties: this.ties
+    });
+  };
+
+  eraseWins() {
     this.wins = 0;
-  }
+    this.ties = 0;
+    this.games = 0;
+  };
 
-  saveWinsToStorage(){
+  savePDToStorage() {
     localStorage.setItem( this.name, this.stringifyImportantData() );
+  };
+
+  retrievePDFromStorage() {
+    var memory = JSON.parse( localStorage.getItem( this.name ) );
+    return (memory) ? memory : { wins: 0, games: 0, ties: 0 };
   }
 
-  retrieveWinsFromStorage(){
-    var memory = JSON.parse( localStorage.getItem( this.name ) );
-    return (memory) ? memory.wins : 0;
+  isAutoAI() {
+    return ( this.type !== 'human' ) && this.autoRun;
+  }
+
+  toggleAutoRun(){
+    this.autoRun = !this.autoRun;
   }
 };
