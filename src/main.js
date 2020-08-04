@@ -260,8 +260,9 @@ function forfeit(showAnimation) {
   if (showAnimation) {
     winAnimation(game.currentPlayer);
     window.setTimeout(winAnimationReset, 2400);
+  } else {
+    clearBoard();
   }
-  clearBoard();
 };
 
 function clearScores() {
@@ -272,9 +273,9 @@ function clearScores() {
 };
 
 function winAnimation(winner) {
-  forfeitButton.disabled = true;
+  disableDuringAnimation();
   kablam.classList.remove('fade'), kablam.classList.add('show-kablam');
-  exclaim.classList.remove('js-bg', 'ruby-bg', 'js-font', 'ruby-font');
+  exclaim.classList.remove(game.p2.bgClass, game.p1.bgClass, game.p2.fontClass, game.p1.fontClass);
   overlay.classList.remove('hidden');
   window.setTimeout(function stage1() { winAnimationStage1(winner) }, 600);
   window.setTimeout(winAnimationStage2, 1800);
@@ -299,7 +300,7 @@ function winAnimationReset() {
 };
 
 function tieAnimation() {
-  forfeitButton.disabled = true;
+  disableDuringAnimation();
   exclaim.innerText = `tie.`;
   exclaim.classList.remove('js-bg', 'ruby-bg', 'js-font', 'ruby-font');
   exclaim.classList.add('show-exclaim', 'draw');
@@ -317,11 +318,10 @@ function getNextPlayer() {
 };
 
 function setButtonStatus() {
-  var gameHasStarted = game.hasStarted();
-  forfeitButton.disabled = !gameHasStarted;
-  clearButton.disabled = gameHasStarted;
-  p1ChangeName.disabled = gameHasStarted, p1ChangeName.innerText = 'Change';
-  p2ChangeName.disabled = gameHasStarted, p2ChangeName.innerText = 'Change';
+  forfeitButton.disabled = !game.hasStarted();
+  clearButton.disabled = game.hasStarted();
+  p1ChangeName.disabled = game.hasStarted(), p1ChangeName.innerText = 'Change';
+  p2ChangeName.disabled = game.hasStarted(), p2ChangeName.innerText = 'Change';
   for ( var node of document.querySelectorAll('.if-game-dont-show') ) {
     node.classList.add('hidden');
   }
@@ -339,6 +339,8 @@ function ifNotHumanDisplayStop(){
 function ifNotAutoDisplayStep() {
   p1Step.classList[ (game.p1.autoRun || game.p1.type === 'human') ? 'add' : 'remove' ]( 'hidden' );
   p2Step.classList[ (game.p2.autoRun || game.p2.type === 'human' ) ? 'add' : 'remove' ]( 'hidden' );
+  p1Step.disabled = false;
+  p2Step.disabled = false;
 }
 
 function updatePlayerWinsDisplay() {
@@ -349,3 +351,9 @@ function updatePlayerWinsDisplay() {
   playerNames[0].innerText = p1;
   playerNames[1].innerText = p2;
 };
+
+function disableDuringAnimation(){
+  p1Step.disabled = true;
+  p2Step.disabled = true;
+  forfeitButton.disabled = true;
+}
