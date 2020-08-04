@@ -173,12 +173,14 @@ function tryAITurnLoop() {
 }
 
 function takeAITurn(){
-  var behavior = {
-    'ez': game.randomOpenTile,
-    'med': game.winMoveOrRandom,
-    'hard': game.optimal
+  if(game.currentPlayer.type !== 'human'){
+    var behavior = {
+      'ez': 'randomOpenTile',
+      'med': 'winMoveOrRandom',
+      'hard': 'optimal'
+    }
+    var coordinates = game[ behavior[game.currentPlayer.type] ]();
   }
-  var coordinates = behavior[game.currentPlayer.type]();
   game.takeTurn( coordinates );
   refreshDisplay();
   checkGameOver( coordinates );

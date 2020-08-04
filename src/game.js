@@ -125,7 +125,7 @@ class Game{
   }
 
   winMoveOrRandom() {
-    return hasAWinningPlay() || randomOpenTile();
+    return this.findWinningMove() || this.randomOpenTile();
   }
 
   hasAWinningPlay(symbolArr){
