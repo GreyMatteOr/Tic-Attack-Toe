@@ -82,7 +82,6 @@ function tryAITurnLoop() {
   if( ( game.currentPlayer.isAutoAI() )) {
     takeAITurn();
   }
-  setButtonStatus();
 }
 
 function takeAITurn(){
