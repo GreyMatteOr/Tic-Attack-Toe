@@ -1,9 +1,9 @@
 class Player{
-  constructor(symbol, icon, dataObj, bgClass, fontClass) {
-    this.symbol = symbol;
-    this.icon = icon;
-    this.bgClass = bgClass;
-    this.fontClass = fontClass;
+  constructor(styleObj, dataObj) {
+    this.symbol = styleObj.symbol;
+    this.icon = styleObj.icon;
+    this.bgClass = styleObj.bgClass;
+    this.fontClass = styleObj.fontClass;
     this.type = dataObj.type;
     this.autoRun = dataObj.autoRun;
     this._playerData = this.retrievePDFromStorage();

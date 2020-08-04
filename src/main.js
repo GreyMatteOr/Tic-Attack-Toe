@@ -173,10 +173,15 @@ function tryAITurnLoop() {
 }
 
 function takeAITurn(){
-  var xy = game.randomOpenTile();
-  game.takeTurn( xy );
+  var behavior = {
+    'ez': game.randomOpenTile,
+    'med': game.winMoveOrRandom,
+    'hard': game.optimal
+  }
+  var coordinates = behavior[game.currentPlayer.type]();
+  game.takeTurn( coordinates );
   refreshDisplay();
-  checkGameOver( xy );
+  checkGameOver( coordinates );
 }
 
 function clearBoard() {

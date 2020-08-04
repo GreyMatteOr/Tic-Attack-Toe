@@ -5,18 +5,24 @@ class Game{
       ['','',''],
       ['','','']
     ];
-    this.p1 = new Player('x', './assets/ruby.png', p1Obj, 'ruby-bg', 'ruby-font', p1Obj.type);
-    this.p2 = new Player('o', './assets/js-icon.webp', p2Obj, 'js-bg', 'js-font');
+    var p1StyleObj = {
+      symbol: 'x',
+      icon: './assets/ruby.png',
+      bgClass: 'ruby-bg',
+      fontClass: 'ruby-font'
+    }
+    var p2StyleObj = {
+      symbol: 'o',
+      icon: './assets/js-icon.webp',
+      bgClass: 'js-bg',
+      fontClass: 'js-font'
+    }
+    this.p1 = new Player(p1StyleObj, p1Obj);
+    this.p2 = new Player(p2StyleObj, p2Obj);
     this.currentPlayer = this.randomElementFromArray( [this.p1, this.p2] );
     this.p1.opponent = this.p2;
     this.p2.opponent = this.p1;
     this.inARowToWin = inARowToWin || 3;
-    this.directions = {
-      right: this.right,
-      downRight: this.downRight,
-      down: this.down,
-      upRight: this.upRight
-    };
     this.turns = 0;
   };
 
@@ -25,15 +31,15 @@ class Game{
     return array[randomIndex];
   };
 
-  tileIsEmpty(xy) {
-    if ( this.board[ xy[0] ][ xy[1] ] === '' ) {
+  tileIsEmpty(coordinates) {
+    if ( this.board[ coordinates[0] ][ coordinates[1] ] === '' ) {
       return true;
     }
     return false;
   };
 
-  takeTurn(xy) {
-    this.board[ xy[0] ][ xy[1] ] = this.currentPlayer.symbol;
+  takeTurn(coordinates) {
+    this.board[ coordinates[0] ][ coordinates[1] ] = this.currentPlayer.symbol;
     if (this.turns === 0){
       this.p1.games++;
       this.p2.games++;
@@ -45,21 +51,21 @@ class Game{
     this.currentPlayer = this.currentPlayer.opponent;
   };
 
-  checkForWins(xy) {
-    var horizontal = this.numInARow( [ xy[0], 0 ], this.directions.right );
-    var vertical = this.numInARow( [ 0, xy[1] ], this.directions.down );
-    var diagonalDR = this.numInARow( [ 0, 0 ], this.directions.downRight );
-    var diagonalUR = this.numInARow( [ this.board.length - 1, 0 ], this.directions.upRight );
+  checkForWins(coordinates) {
+    var horizontal = this.numInARow( [ coordinates[0], 0 ], this.right );
+    var vertical = this.numInARow( [ 0, coordinates[1] ], this.down );
+    var diagonalDR = this.numInARow( [ 0, 0 ], this.downRight );
+    var diagonalUR = this.numInARow( [ this.board.length - 1, 0 ], this.upRight );
     return Math.max(horizontal, vertical, diagonalDR, diagonalUR) === this.inARowToWin;
   };
 
-  numInARow(xy, direction) {
-    if( this.board[ xy[0] ] === undefined ||
-        this.board[ xy[0] ][ xy[1] ] === undefined ||
-        this.board[ xy[0] ][ xy[1] ] !== this.currentPlayer.symbol ) {
+  numInARow(coordinates, direction) {
+    if( this.board[ coordinates[0] ] === undefined ||
+        this.board[ coordinates[0] ][ coordinates[1] ] === undefined ||
+        this.board[ coordinates[0] ][ coordinates[1] ] !== this.currentPlayer.symbol ) {
       return 0;
     }
-    return 1 + this.numInARow( direction(xy), direction );
+    return 1 + this.numInARow( direction(coordinates), direction );
   };
 
   giveTie(){
@@ -98,7 +104,7 @@ class Game{
       [[0,0],[1,1],[2,2]],
       [[0,2],[1,1],[2,0]]
     ];
-    for( var player of [this.p1, this.p2] ){
+    for( var player of [this.currentPlayer, this.currentPlayer.opponent] ){
       for( var line of lines ) {
         var symbolsArr = this.getEachSymbol(line);
         var win = this.hasAWinningPlay(symbolsArr);
@@ -118,6 +124,10 @@ class Game{
     return symbols;
   }
 
+  winMoveOrRandom() {
+    return hasAWinningPlay() || randomOpenTile();
+  }
+
   hasAWinningPlay(symbolArr){
     var count = {};
     for (var i = 0; i < symbolArr.length; i++){
@@ -130,19 +140,19 @@ class Game{
     return -1;
   }
 
-  right(xy) {
-    return [ xy[0], (xy[1] + 1) ];
+  right(coordinates) {
+    return [ coordinates[0], (coordinates[1] + 1) ];
   };
 
-  downRight(xy) {
-    return [ (xy[0] + 1), (xy[1] + 1) ];
+  downRight(coordinates) {
+    return [ (coordinates[0] + 1), (coordinates[1] + 1) ];
   };
 
-  down(xy) {
-    return [ (xy[0] + 1), xy[1] ];
+  down(coordinates) {
+    return [ (coordinates[0] + 1), coordinates[1] ];
   };
 
-  upRight(xy) {
-    return [ (xy[0] - 1), (xy[1] + 1) ];
+  upRight(coordinates) {
+    return [ (coordinates[0] - 1), (coordinates[1] + 1) ];
   };
 };
