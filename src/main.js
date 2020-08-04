@@ -113,7 +113,6 @@ function checkGameOver( coordinates ) {
 };
 
 function addPlayerWin() {
-  game.giveWin();
   updatePlayerWinsDisplay();
 };
 
