@@ -31,6 +31,10 @@ class Game{
     return array[randomIndex];
   };
 
+  hasStarted() {
+    return this.turns > 0;
+  };
+
   tileIsEmpty(coordinates) {
     if ( this.board[ coordinates[0] ][ coordinates[1] ] === '' ) {
       return true;
@@ -45,10 +49,6 @@ class Game{
       this.p2.games++;
     }
     this.turns++;
-  };
-
-  switchCurrentPlayer() {
-    this.currentPlayer = this.currentPlayer.opponent;
   };
 
   checkForWins(coordinates) {
@@ -68,6 +68,7 @@ class Game{
     return 1 + this.numInARow( direction(coordinates), direction );
   };
 
+
   giveTie(){
     this.p1.ties++;
     this.p2.ties++;
@@ -77,23 +78,133 @@ class Game{
     this.currentPlayer.wins++;
   };
 
-  isEmpty() {
-    return this.turns === 0;
+  switchCurrentPlayer() {
+    this.currentPlayer = this.currentPlayer.opponent;
   };
 
-  randomOpenTile(){
-    var openTiles = []
+  winOrCornerStratOrTie() {
+    return this.findWinningMove() || this.preventCornerStrat() || this.preventPin() || this.cornerStrat() || this.cornerFork() || this.randomOpenTile();
+  }
+
+  preventCornerStrat() {
+    console.log('prevent Corner!')
+    if ( this.turns === 1 &&
+         this.isACorner( this.findFilledSpaceThatMatches( this.currentPlayer.opponent.symbol ) ) ) {
+      return [1,1];
+    }
+    console.log('fail!')
+    return false;
+  }
+
+  preventPin() {
+    console.log('prevent pin')
+    var enemyTile = this.findFilledSpaceThatMatches( this.currentPlayer.opponent.symbol );
+    if ( this.turns === 3 &&
+     this.isACorner( enemyTile ) &&
+     this.oppositeCornerTileSymbol(enemyTile) === this.currentPlayer.opponent.symbol ) {
+      return this.sideTileBy(enemyTile);
+    }
+    console.log('fail')
+    return false;
+  }
+
+  oppositeCornerTileSymbol( coordinates ) {
+    var height = this.board.length - 1 ;
+    var width = this.board[coordinates[0]].length - 1;
+    var row = coordinates[0];
+    var col = coordinates[1];
+    row += (coordinates[0] === 0) ? width : (-width);
+    col += (coordinates[1] === 0) ? height : (-height)
+    if (
+     row < 0 ||
+     row > height ||
+     col < 0 ||
+     col > width) {
+      return false;
+    }
+    return this.board[row][col];
+  }
+
+  sideTileBy( coordinates ) {
+    console.log(`getting sideTileBy ${coordinates}`)
+    var belowOrAbove = (coordinates[0] === 0) ?
+                         [ coordinates[0] + 1, coordinates[1] ] :
+                         [ coordinates[0] - 1, coordinates[1] ];
+    var leftOrRight = (coordinates[1] === 0) ?
+                         [ coordinates[0], coordinates[1] + 1 ] :
+                         [ coordinates[0], coordinates[1] - 1 ];
+    return this.randomElementFromArray( [belowOrAbove, leftOrRight] )
+  }
+
+  isACorner(coordinates){
+    var topOrBot = [ 0, this.board.length - 1 ].includes( coordinates[0] );
+    var leftOrRight = [ 0, this.board[0].length - 1 ].includes( coordinates[1] );
+    return topOrBot && leftOrRight;
+  }
+
+  cornerStrat() {
+    console.log('CORNER');
+    if (!this.hasStarted()){
+      return this.randomElementFromArray([
+        [0,0],
+        [2,0],
+        [0,2],
+        [2,2]
+      ]);
+    }
+    if (this.turns === 1){
+      return this.aCornerOnTheSameSideAs( this.findFilledSpaceThatMatches( this.currentPlayer.opponent.symbol ) );
+    }
+    if (this.turns === 2){
+      return this.aCornerOnTheSameSideAs( this.findFilledSpaceThatMatches( this.currentPlayer.symbol ) )
+    }
+    console.log('FAIL');
+    return false;
+  }
+
+  aCornerOnTheSameSideAs ( coordinates ) {
+    var corners = [];
+    if ( ( coordinates[0] === 0 ) ||
+         ( coordinates[0] === this.board.length - 1 ) ) {
+      corners.push( [ coordinates[0], 0 ] );
+      corners.push( [ coordinates[0], 2 ] );
+    }
+    if ( ( coordinates[1] === 0) ||
+         ( coordinates[1] === this.board[ coordinates[0] ].length - 1 ) ) {
+      corners.push( [ 0, coordinates[1] ] );
+      corners.push( [ 2, coordinates[1] ] );
+    }
+    this.removeFilledTiles( corners );
+    return this.randomElementFromArray( corners );
+  }
+
+  removeFilledTiles( tileArray ) {
+    for (var i = 0; i < tileArray.length; i++) {
+      var row = tileArray[i][0];
+      var col = tileArray[i][1];
+      if ( this.board[ row ][ col ] !== '' ) {
+        tileArray.splice( i, 1 )
+        i--;
+      }
+    }
+  }
+
+  findFilledSpaceThatMatches( symbol ){
     for( var row = 0; row < this.board.length; row++ ) {
-      for( var col = 0; col < this.board[row].length; col++) {
-        if ( this.board[row][col] === '' ) {
-          openTiles.push([row, col])
+      for( var col = 0; col < this.board[row].length; col++ ) {
+        if ( this.board[ row ][ col ] === symbol ) {
+          return [ row, col ];
         }
       }
     }
-    return this.randomElementFromArray(openTiles);
   }
 
-  findWinningMove(){
+  winOrRandom() {
+    return this.findWinningMove() || this.randomOpenTile();
+  }
+
+  findWinningMove() {
+    console.log('winning?')
     var lines = [
       [[0,0],[0,1],[0,2]],
       [[1,0],[1,1],[1,2]],
@@ -113,6 +224,7 @@ class Game{
         }
       }
     }
+    console.log('fail')
     return false;
   }
 
@@ -122,10 +234,6 @@ class Game{
       symbols.push( this.board[ tile[0] ] [tile[1] ] );
     }
     return symbols;
-  }
-
-  winMoveOrRandom() {
-    return this.findWinningMove() || this.randomOpenTile();
   }
 
   hasAWinningPlay(symbolArr){
@@ -138,6 +246,19 @@ class Game{
       return symbolArr.indexOf('');
     }
     return -1;
+  }
+
+  randomOpenTile(){
+    console.log('RANDOM')
+    var openTiles = []
+    for( var row = 0; row < this.board.length; row++ ) {
+      for( var col = 0; col < this.board[row].length; col++) {
+        if ( this.board[row][col] === '' ) {
+          openTiles.push([row, col])
+        }
+      }
+    }
+    return this.randomElementFromArray(openTiles);
   }
 
   right(coordinates) {

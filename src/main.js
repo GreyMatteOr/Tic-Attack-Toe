@@ -29,7 +29,7 @@ window.onload = function doOnLoad() {
 };
 
 window.beforeunload = function ifGameThenForfeit() {
-  if( !game.isEmpty ) {
+  if( game.hasStarted ) {
     forfeit(false);
   }
 };
@@ -166,7 +166,7 @@ function startNewGame(p1Name, p2Name, p1Type, p2Type) {
 };
 
 function tryAITurnLoop() {
-  if( ( game.currentPlayer.isAutoAI() ) && ( game.turns < 9 ) ) {
+  if( ( game.currentPlayer.isAutoAI() )) {
     takeAITurn();
   }
   setButtonStatus();
@@ -176,8 +176,8 @@ function takeAITurn(){
   if(game.currentPlayer.type !== 'human'){
     var behavior = {
       'ez': 'randomOpenTile',
-      'med': 'winMoveOrRandom',
-      'hard': 'optimal'
+      'med': 'winOrRandom',
+      'hard': 'winOrCornerStratOrTie'
     }
     var coordinates = game[ behavior[game.currentPlayer.type] ]();
   }
@@ -317,11 +317,11 @@ function getNextPlayer() {
 };
 
 function setButtonStatus() {
-  var gameIsEmpty = game.isEmpty();
-  forfeitButton.disabled = gameIsEmpty;
-  clearButton.disabled = !gameIsEmpty;
-  p1ChangeName.disabled = !gameIsEmpty, p1ChangeName.innerText = 'Change';
-  p2ChangeName.disabled = !gameIsEmpty, p2ChangeName.innerText = 'Change';
+  var gameHasStarted = game.hasStarted();
+  forfeitButton.disabled = !gameHasStarted;
+  clearButton.disabled = gameHasStarted;
+  p1ChangeName.disabled = gameHasStarted, p1ChangeName.innerText = 'Change';
+  p2ChangeName.disabled = gameHasStarted, p2ChangeName.innerText = 'Change';
   for ( var node of document.querySelectorAll('.if-game-dont-show') ) {
     node.classList.add('hidden');
   }
