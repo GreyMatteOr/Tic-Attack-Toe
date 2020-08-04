@@ -188,10 +188,10 @@ class Game{
     if( !this.hasStarted() ) {
       return this.randomElementFromArray(corners);
     }
-    if( corners.length === 4 ){
+    if( corners.length === 4 && !this.isCenter(enemyTile)){
       return this.oppositeCornerTile( this.aCornerOnTheSameSideAs(enemyTile) )
     }
-    return this.aCornerOnTheSameSideAs(playerTile) || this.randomElementFromArray( corners );
+    return (!this.isCenter(enemyTile)) ? this.aCornerOnTheSameSideAs(playerTile) : this.randomElementFromArray( corners );
   }
 
   aCornerOnTheSameSideAs ( coordinates ) {

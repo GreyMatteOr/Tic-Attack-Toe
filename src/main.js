@@ -209,32 +209,6 @@ function ifEmptyThenFill(tile) {
   }
 };
 
-function refreshDisplay(){
-  var tiles = document.querySelectorAll('.tile');
-  tiles.forEach(function insertEmptyIcon(tile) {
-    var row = 'tmb'.indexOf(tile.id[0]);
-    var col = 'lcr'.indexOf(tile.id[1]);
-    if(game.getSymbol( [row, col] ) === ''){
-      empty(tile);
-    } else {
-      var player = (game.p1.symbol === game.getSymbol( [row, col] ) ) ? game.p1 : game.p2;
-      fill(tile, player)
-    }
-  });
-}
-
-function empty(tile){
-  tile.src = './assets/empty.png';
-  tile.classList.add('empty');
-  tile.classList.remove('js-bg', 'ruby-bg');
-}
-
-function fill(tile, player) {
-  tile.src = player.icon;
-  tile.classList.add(player.colorClass);
-  tile.classList.remove('empty');
-};
-
 function checkGameOver( coordinates ) {
   if( game.checkForWins(coordinates) ) {
     addPlayerWin();
@@ -265,11 +239,42 @@ function forfeit(showAnimation) {
   }
 };
 
+function getNextPlayer() {
+  game.switchCurrentPlayer();
+  nextPlayerIcon.src = game.currentPlayer.icon;
+};
+
 function clearScores() {
   for (var player of [game.p1, game.p2] ) {
     player.eraseWins();
   };
   updatePlayerWinsDisplay();
+};
+
+function refreshDisplay(){
+  var tiles = document.querySelectorAll('.tile');
+  tiles.forEach(function insertEmptyIcon(tile) {
+    var row = 'tmb'.indexOf(tile.id[0]);
+    var col = 'lcr'.indexOf(tile.id[1]);
+    if(game.getSymbol( [row, col] ) === ''){
+      empty(tile);
+    } else {
+      var player = (game.p1.symbol === game.getSymbol( [row, col] ) ) ? game.p1 : game.p2;
+      fill(tile, player)
+    }
+  });
+}
+
+function empty(tile){
+  tile.src = './assets/empty.png';
+  tile.classList.add('empty');
+  tile.classList.remove(game.p2.bgClass, game.p1.bgClass);
+}
+
+function fill(tile, player) {
+  tile.src = player.icon;
+  tile.classList.add(player.colorClass);
+  tile.classList.remove('empty');
 };
 
 function winAnimation(winner) {
@@ -302,7 +307,7 @@ function winAnimationReset() {
 function tieAnimation() {
   disableDuringAnimation();
   exclaim.innerText = `tie.`;
-  exclaim.classList.remove('js-bg', 'ruby-bg', 'js-font', 'ruby-font');
+  exclaim.classList.remove(game.p2.bgClass, game.p1.bgClass, game.p2.fontClass, game.p1.fontClass);
   exclaim.classList.add('show-exclaim', 'draw');
   window.setTimeout(tieAnimationReset, 1200);
 };
@@ -310,11 +315,6 @@ function tieAnimation() {
 function tieAnimationReset() {
   exclaim.classList.remove('show-exclaim', 'draw');
   clearBoard();
-};
-
-function getNextPlayer() {
-  game.switchCurrentPlayer();
-  nextPlayerIcon.src = game.currentPlayer.icon;
 };
 
 function setButtonStatus() {
