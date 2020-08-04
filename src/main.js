@@ -100,7 +100,7 @@ function takeAITurn(){
 
 function checkGameOver( coordinates ) {
   if( game.checkForWins(coordinates) ) {
-    addPlayerWin();
+    updatePlayerWinsDisplay();
     winAnimation(game.currentPlayer);
   } else if (game.turns >= 9) {
     game.giveTie();
@@ -110,10 +110,6 @@ function checkGameOver( coordinates ) {
     setButtonStatus();
     tryAITurnLoop();
   }
-};
-
-function addPlayerWin() {
-  updatePlayerWinsDisplay();
 };
 
 function toggleAutoAI(){
@@ -229,7 +225,8 @@ function ifEmptyThenFill(tile) {
 
 function forfeit(showAnimation) {
   game.switchCurrentPlayer();
-  addPlayerWin();
+  game.giveWin();
+  updatePlayerWinsDisplay();
   if (showAnimation) {
     winAnimation(game.currentPlayer);
     window.setTimeout(winAnimationReset, 2400);
