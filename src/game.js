@@ -75,7 +75,6 @@ class Game{
     return 1 + this.numInARow( direction(coordinates), direction );
   };
 
-
   giveTie(){
     this.p1.ties++;
     this.p2.ties++;
@@ -90,7 +89,28 @@ class Game{
   };
 
   winOrCornerStratOrTie() {
-    return this.findWinningMove() || this.preventCornerStrat() || this.preventPin() || this.cornerStrat() || this.cornerFork() || this.randomOpenTile();
+    return this.findWinningMove() || this.preventCornerStrat() || this.preventPin() || this.preventCross() || this.cornerStrat() || this.randomOpenTile();
+  }
+
+  preventCross() {
+    var enemyTile = this.findFilledSpaceThatMatches( this.currentPlayer.opponent.symbol );
+    var playerTile = this.findFilledSpaceThatMatches( this.currentPlayer.symbol );
+    var adjacentSideTest = enemyTile;
+    var adjacentCornerTest = playerTile;
+    if( this.turns !== 3 || !this.isASide( enemyTile ) ) {
+      return false
+    }
+    while( adjacentSideTest && this.getSymbol( adjacentSideTest ) !== '') {
+      adjacentSideTest = this.sideTileBy(playerTile);
+    }
+    while( adjacentCornerTest && this.getSymbol( adjacentCornerTest ) !== '') {
+      console.log(adjacentCornerTest)
+      adjacentCornerTest = this.aCornerOnTheSameSideAs( adjacentSideTest );
+    }
+    return adjacentCornerTest;
+  }
+
+  beatCross(){
   }
 
   preventCornerStrat() {
@@ -105,8 +125,13 @@ class Game{
 
   preventPin() {
     console.log('prevent pin')
+    if( !game.hasStarted() ){
+      return false;
+    }
     var enemyTile = this.findFilledSpaceThatMatches( this.currentPlayer.opponent.symbol );
+    console.log(`enemy : ${enemyTile}`)
     var tileOpposite = this.oppositeCornerTile(enemyTile);
+    console.log(`opposite: ${tileOpposite }`)
     if ( this.turns === 3 &&
      this.isACorner( enemyTile ) &&
      this.getSymbol( tileOpposite ) === this.currentPlayer.opponent.symbol ) {
@@ -117,13 +142,15 @@ class Game{
   }
 
   oppositeCornerTile( coordinates ) {
+    console.log('opposite!')
     var height = this.board.length - 1 ;
     var width = this.board[coordinates[0]].length - 1;
     var row = coordinates[0];
     var col = coordinates[1];
     row += (coordinates[0] === 0) ? width : (-width);
     col += (coordinates[1] === 0) ? height : (-height)
-    return this.getSymbol( [row, column] )
+    console.log('fail!')
+    return [row, col];
   }
 
   sideTileBy( coordinates ) {
@@ -137,30 +164,43 @@ class Game{
     return this.randomElementFromArray( [belowOrAbove, leftOrRight] )
   }
 
-  isACorner(coordinates){
+  isASide(coordinates) {
+    return !this.isACorner(coordinates) && !this.isCenter(coordinates);
+  }
+
+  isCenter(coordinates) {
+    return ( coordinates[0] === 1 ) && ( coordinates[1] === 1 );
+  }
+
+  isACorner(coordinates) {
     var topOrBot = [ 0, this.board.length - 1 ].includes( coordinates[0] );
     var leftOrRight = [ 0, this.board[0].length - 1 ].includes( coordinates[1] );
     return topOrBot && leftOrRight;
   }
 
   cornerStrat() {
-    console.log('CORNER');
-    if (!this.hasStarted()){
-      return this.randomElementFromArray([
-        [0,0],
-        [2,0],
-        [0,2],
-        [2,2]
-      ]);
+    var playerTile = this.findFilledSpaceThatMatches( this.currentPlayer.symbol );
+    var enemyTile = this.findFilledSpaceThatMatches( this.currentPlayer.opponent.symbol );
+    var corners = [
+      [0,0],
+      [2,0],
+      [0,2],
+      [2,2]
+    ];
+    this.removeFilledTiles(corners);
+    if( corners.length <= 0){
+      return false;
     }
-    if (this.turns === 1){
-      return this.aCornerOnTheSameSideAs( this.findFilledSpaceThatMatches( this.currentPlayer.opponent.symbol ) );
+    if( corners.length === 3 && this.turns == 1) {
+      return this.aCornerOnTheSameSideAs( enemyTile );
     }
-    if (this.turns === 2){
-      return this.aCornerOnTheSameSideAs( this.findFilledSpaceThatMatches( this.currentPlayer.symbol ) )
+    if( !this.hasStarted() ) {
+      return this.randomElementFromArray(corners);
     }
-    console.log('FAIL');
-    return false;
+    if( corners.length === 4 ){
+      return this.oppositeCornerTile( this.aCornerOnTheSameSideAs(enemyTile) )
+    }
+    return this.aCornerOnTheSameSideAs(playerTile) || this.randomElementFromArray( corners );
   }
 
   aCornerOnTheSameSideAs ( coordinates ) {
@@ -188,9 +228,10 @@ class Game{
     }
   }
 
-  findFilledSpaceThatMatches( symbol ){
-    for( var row = 0; row < this.board.length; row++ ) {
-      for( var col = 0; col < this.board[row].length; col++ ) {
+  findFilledSpaceThatMatches( symbol, board ){
+    var arrayToSearch = board || this.board;
+    for( var row = 0; row < arrayToSearch.length; row++ ) {
+      for( var col = 0; col < arrayToSearch[row].length; col++ ) {
         if ( this.getSymbol( [row, col] ) === symbol ) {
           return [ row, col ];
         }
