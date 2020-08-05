@@ -7,9 +7,9 @@ class Game{
     ];
     this.p1 = new Player(p1StyleObj, p1Obj);
     this.p2 = new Player(p2StyleObj, p2Obj);
-    this.currentPlayer = this.randomElementFromArray( [this.p1, this.p2] );
     this.p1.opponent = this.p2;
     this.p2.opponent = this.p1;
+    this.currentPlayer = this.randomElementFromArray( [this.p1, this.p2] );
     this.inARowToWin = inARowToWin || 3;
     this.turns = 0;
   };
@@ -85,8 +85,8 @@ class Game{
   };
 
   preventCross() {
-    var enemyTile = this.findFilledSpaceThatMatches( this.currentPlayer.opponent.symbol );
-    var playerTile = this.findFilledSpaceThatMatches( this.currentPlayer.symbol );
+    var enemyTile = this.findSpaceThatMatches( this.currentPlayer.opponent.symbol );
+    var playerTile = this.findSpaceThatMatches( this.currentPlayer.symbol );
     var adjacentSideTest = enemyTile;
     var adjacentCornerTest = playerTile;
     if( this.turns !== 3 || !this.isASide( enemyTile ) ) {
@@ -103,7 +103,7 @@ class Game{
 
   preventCornerStrat() {
     if ( this.turns === 1 &&
-         this.isACorner( this.findFilledSpaceThatMatches( this.currentPlayer.opponent.symbol ) ) ) {
+         this.isACorner( this.findSpaceThatMatches( this.currentPlayer.opponent.symbol ) ) ) {
       return [1,1];
     };
 
@@ -114,7 +114,7 @@ class Game{
     if( !game.hasStarted() ) {
       return false;
     };
-    var enemyTile = this.findFilledSpaceThatMatches( this.currentPlayer.opponent.symbol );
+    var enemyTile = this.findSpaceThatMatches( this.currentPlayer.opponent.symbol );
     var tileOpposite = this.oppositeCornerTile(enemyTile);
     if ( this.turns === 3 &&
      this.isACorner( enemyTile ) &&
@@ -159,8 +159,8 @@ class Game{
   };
 
   cornerStrat() {
-    var playerTile = this.findFilledSpaceThatMatches( this.currentPlayer.symbol );
-    var enemyTile = this.findFilledSpaceThatMatches( this.currentPlayer.opponent.symbol );
+    var playerTile = this.findSpaceThatMatches( this.currentPlayer.symbol );
+    var enemyTile = this.findSpaceThatMatches( this.currentPlayer.opponent.symbol );
     var corners = [
       [0,0],
       [2,0],
@@ -187,16 +187,13 @@ class Game{
     var corners = [];
     if ( ( coordinates[0] === 0 ) ||
          ( coordinates[0] === this.board.length - 1 ) ) {
-      corners.push( [ coordinates[0], 0 ] );
-      corners.push( [ coordinates[0], 2 ] );
+      corners.push([ coordinates[0], 0 ]), corners.push([ coordinates[0], 2 ]);
     };
     if ( ( coordinates[1] === 0) ||
          ( coordinates[1] === this.board[ coordinates[0] ].length - 1 ) ) {
-      corners.push( [ 0, coordinates[1] ] );
-      corners.push( [ 2, coordinates[1] ] );
+      corners.push([ 0, coordinates[1] ]), corners.push([ 2, coordinates[1] ]);
     };
-    this.removeFilledTiles( corners );
-    return this.randomElementFromArray( corners );
+    return this.randomElementFromArray( this.removeFilledTiles( corners ) );
   };
 
   removeFilledTiles( tileArray ) {
@@ -208,7 +205,7 @@ class Game{
     };
   };
 
-  findFilledSpaceThatMatches( symbol, board ) {
+  findSpaceThatMatches( symbol, board ) {
     var arrayToSearch = board || this.board;
     for( var row = 0; row < arrayToSearch.length; row++ ) {
       for( var col = 0; col < arrayToSearch[row].length; col++ ) {
@@ -236,8 +233,8 @@ class Game{
     ];
     for( var player of [ this.currentPlayer, this.currentPlayer.opponent ] ) {
       for( var line of lines ) {
-        var symbolsArr = this.getEachSymbol(line);
-        var win = this.hasAWinningPlay(symbolsArr, player.symbol);
+        var symbolsArr = this.convertToSymbols(line);
+        var win = this.winningPlay(symbolsArr, player.symbol);
         if( win !== -1 ) {
           return line[win];
         };
@@ -246,20 +243,20 @@ class Game{
     return false;
   };
 
-  getEachSymbol(line) {
-    var symbols = [];
-    for( var tile of line ) {
-      symbols.push( this.getSymbol(tile) );
-    };
-    return symbols;
-  };
-
-  hasAWinningPlay(symbolArr, symbol) {
+  winningPlay(symbolArr, symbol) {
     var count = {};
     for (var i = 0; i < symbolArr.length; i++) {
       count[ symbolArr[i] ] = count[ symbolArr[i] ] ? count[ symbolArr[i] ] + 1 : 1;
     };
     return ( count[symbol] >= (this.inARowToWin - 1) ) ? symbolArr.indexOf('') : -1;
+  };
+
+  convertToSymbols(line) {
+    var symbols = [];
+    for( var tile of line ) {
+      symbols.push( this.getSymbol(tile) );
+    };
+    return symbols;
   };
 
   randomOpenTile() {
