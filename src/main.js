@@ -1,27 +1,27 @@
-var game;
-
-var gameBoard = document.querySelector('#game-board');
-var nextPlayerIcon = document.querySelector('h1 img');
-var playerNames = document.querySelectorAll('.div-player-score h2');
-var forfeitButton = document.querySelector('.forfeit');
 var clearButton = document.querySelector('.clear');
-var p1ChangeName = document.querySelector('#section-left>button');
-var p2ChangeName = document.querySelector('#section-right>button');
-var p1NameInput = document.querySelector('#section-left input');
-var p2NameInput = document.querySelector('#section-right input');
-var p1SubmitName = document.querySelector('#section-left>.input-flex>button');
-var p2SubmitName = document.querySelector('#section-right>.input-flex>button')
-var p1Anon = document.querySelector('#section-left .anonymous');
-var p2Anon = document.querySelector('#section-right .anonymous');
+var exclaim = document.querySelector('#exclaim-win');
+var forfeitButton = document.querySelector('.forfeit');
+var gameBoard = document.querySelector('#game-board');
+var kablam = document.querySelector('#kablam');
+var nextPlayerIcon = document.querySelector('h1 img');
 var p1AI = document.querySelector('#section-left .AI');
 var p2AI = document.querySelector('#section-right .AI');
 var p1AIStop = document.querySelector('#section-left .stop')
 var p2AIStop = document.querySelector('#section-right .stop')
+var p1Anon = document.querySelector('#section-left .anonymous');
+var p2Anon = document.querySelector('#section-right .anonymous');
+var p1ChangeName = document.querySelector('#section-left>button');
+var p2ChangeName = document.querySelector('#section-right>button');
+var p1NameInput = document.querySelector('#section-left input');
+var p2NameInput = document.querySelector('#section-right input');
 var p1Step = document.querySelector('#section-left .step')
 var p2Step = document.querySelector('#section-right .step')
-var kablam = document.querySelector('#kablam');
-var exclaim = document.querySelector('#exclaim-win');
+var p1SubmitName = document.querySelector('#section-left>.input-flex>button');
+var p2SubmitName = document.querySelector('#section-right>.input-flex>button')
+var playerNames = document.querySelectorAll('.div-player-score h2');
 var overlay = document.querySelector('.overlay');
+
+var game;
 
 window.onload = function doOnLoad() {
   clearBoard();
@@ -34,36 +34,102 @@ window.beforeunload = function ifGameThenForfeit() {
   }
 };
 
+clearButton.addEventListener('click', clearScores);
 gameBoard.addEventListener('click', ifTileAttemptTurn);
 forfeitButton.addEventListener('click', function forfeitAndShowAnimation() {
   forfeit(true);
 });
-clearButton.addEventListener('click', clearScores);
-p1ChangeName.addEventListener('click', toggleForm);
-p2ChangeName.addEventListener('click', toggleForm);
-p1NameInput.addEventListener('keydown', ifEnterAttemptChangeName);
-p2NameInput.addEventListener('keydown', ifEnterAttemptChangeName);
-p1Anon.addEventListener('click', becomeAnonymous);
-p2Anon.addEventListener('click', becomeAnonymous);
 p1AI.addEventListener('click', ifAIButtonCreateGame);
 p2AI.addEventListener('click', ifAIButtonCreateGame);
 p1AIStop.addEventListener('click', toggleAutoAI);
 p2AIStop.addEventListener('click', toggleAutoAI);
+p1Anon.addEventListener('click', becomeAnonymous);
+p2Anon.addEventListener('click', becomeAnonymous);
+p1ChangeName.addEventListener('click', toggleForm);
+p2ChangeName.addEventListener('click', toggleForm);
+p1NameInput.addEventListener('keydown', ifEnterAttemptChangeName);
+p2NameInput.addEventListener('keydown', ifEnterAttemptChangeName);
 p1Step.addEventListener('click', takeAITurn);
 p2Step.addEventListener('click', takeAITurn);
 p1SubmitName.addEventListener('click', tryName);
 p2SubmitName.addEventListener('click', tryName);
 
-function tryName(event){
-  var isLeft = event.target.closest('section').dataset.side === 'left';
-  attempChangeName(isLeft, event);
+
+function clearBoard() {
+  startNewGame();
+  refreshDisplay();
+  setButtonStatus();
+};
+
+function startNewGame(p1Name, p2Name, p1Type, p2Type) {
+  var p1Obj = {
+     name : p1Name || ( (game) ? game.p1.name : 'Ruby Player' ),
+     type : p1Type || ( (game) ? game.p1.type : 'human' ),
+     autoRun : (game) ? game.p1.autoRun : true
+   }
+  var p2Obj = {
+    name : p2Name || ( (game) ? game.p2.name : 'JS Player' ),
+    type : p2Type || ( (game) ? game.p2.type : 'human' ),
+    autoRun : (game) ? game.p2.autoRun : true
+  }
+  var p1StyleObj = {
+    symbol: 'x',
+    icon: './assets/ruby.png',
+    bgClass: 'ruby-bg',
+    fontClass: 'ruby-font'
+  };
+  var p2StyleObj = {
+    symbol: 'o',
+    icon: './assets/js-icon.webp',
+    bgClass: 'js-bg',
+    fontClass: 'js-font'
+  };
+  game = new Game( p1Obj, p2Obj, p1StyleObj, p2StyleObj);
+  nextPlayerIcon.src = game.currentPlayer.icon;
+  updatePlayerWinsDisplay();
+  tryAITurnLoop()
+};
+
+function tryAITurnLoop() {
+  if( ( game.currentPlayer.isAutoAI() )) {
+    takeAITurn();
+  }
 }
+
+function takeAITurn(){
+  if(game.currentPlayer.type !== 'human'){
+    var behavior = {
+      'ez': 'randomOpenTile',
+      'med': 'winOrRandom',
+      'hard': 'winOrCornerStratOrTie'
+    }
+    var coordinates = game[ behavior[game.currentPlayer.type] ]();
+    game.takeTurn( coordinates );
+    refreshDisplay();
+    checkGameOver( coordinates );
+  }
+}
+
+function checkGameOver( coordinates ) {
+  if( game.checkForWins(coordinates) ) {
+    updatePlayerWinsDisplay();
+    winAnimation(game.currentPlayer);
+  } else if (game.turns >= 9) {
+    game.giveTie();
+    tieAnimation();
+  } else {
+    getNextPlayer();
+    setButtonStatus();
+    tryAITurnLoop();
+  }
+};
 
 function toggleAutoAI(){
   var isLeft = event.target.closest('section').dataset.side === 'left';
   ( (isLeft) ? game.p1 : game.p2 ).toggleAutoRun();
   event.target.innerText = ( event.target.innerText === 'manual' ) ? 'run=auto' : 'manual';
   tryAITurnLoop();
+  ifNotAutoDisplayStep();
 }
 
 function ifAIButtonCreateGame(event){
@@ -96,6 +162,11 @@ function ifEnterAttemptChangeName(event) {
     tryName(event);
   }
 };
+
+function tryName(event){
+  var isLeft = event.target.closest('section').dataset.side === 'left';
+  attempChangeName(isLeft, event);
+}
 
 function attempChangeName(isLeft, event){
   var userText = ( isLeft ) ? p1NameInput.value : p2NameInput.value;
@@ -144,52 +215,7 @@ function clearInputs() {
 
 function becomeAnonymous(event) {
   var isLeft = event.target.closest('section').dataset.side === 'left';
-  var names = (isLeft) ? [ 'Ruby Player', game.p2.name ] : [ game.p1.name, 'JS Player' ];
-  startNewGame( names[0], names[1], 'human', 'human' );
-};
-
-function startNewGame(p1Name, p2Name, p1Type, p2Type) {
-  var p1Obj = {
-     name : p1Name || ( (game) ? game.p1.name : 'Ruby Player' ),
-     type : p1Type || ( (game) ? game.p1.type : 'human' ),
-     autoRun : (game) ? game.p1.autoRun : true
-   }
-  var p2Obj = {
-    name : p2Name || ( (game) ? game.p2.name : 'JS Player' ),
-    type : p2Type || ( (game) ? game.p2.type : 'human' ),
-    autoRun : (game) ? game.p2.autoRun : true
-  }
-  game = new Game( p1Obj, p2Obj);
-  nextPlayerIcon.src = game.currentPlayer.icon;
-  updatePlayerWinsDisplay();
-  tryAITurnLoop()
-};
-
-function tryAITurnLoop() {
-  if( ( game.currentPlayer.isAutoAI() )) {
-    takeAITurn();
-  }
-  setButtonStatus();
-}
-
-function takeAITurn(){
-  if(game.currentPlayer.type !== 'human'){
-    var behavior = {
-      'ez': 'randomOpenTile',
-      'med': 'winOrRandom',
-      'hard': 'winOrCornerStratOrTie'
-    }
-    var coordinates = game[ behavior[game.currentPlayer.type] ]();
-  }
-  game.takeTurn( coordinates );
-  refreshDisplay();
-  checkGameOver( coordinates );
-}
-
-function clearBoard() {
-  startNewGame();
-  refreshDisplay();
-  setButtonStatus();
+  changeName( ( (isLeft) ? 'Ruby Player' : 'JS Player' ), isLeft, event );
 };
 
 function ifTileAttemptTurn(event) {
@@ -209,6 +235,30 @@ function ifEmptyThenFill(tile) {
   }
 };
 
+function forfeit(showAnimation) {
+  game.switchCurrentPlayer();
+  game.giveWin();
+  updatePlayerWinsDisplay();
+  if (showAnimation) {
+    winAnimation(game.currentPlayer);
+    window.setTimeout(winAnimationReset, 2400);
+  } else {
+    clearBoard();
+  }
+};
+
+function getNextPlayer() {
+  game.switchCurrentPlayer();
+  nextPlayerIcon.src = game.currentPlayer.icon;
+};
+
+function clearScores() {
+  for (var player of [game.p1, game.p2] ) {
+    player.eraseWins();
+  };
+  updatePlayerWinsDisplay();
+};
+
 function refreshDisplay(){
   var tiles = document.querySelectorAll('.tile');
   tiles.forEach(function insertEmptyIcon(tile) {
@@ -226,50 +276,13 @@ function refreshDisplay(){
 function empty(tile){
   tile.src = './assets/empty.png';
   tile.classList.add('empty');
-  tile.classList.remove('js-bg', 'ruby-bg');
+  tile.classList.remove(game.p2.bgClass, game.p1.bgClass);
 }
 
 function fill(tile, player) {
   tile.src = player.icon;
   tile.classList.add(player.colorClass);
   tile.classList.remove('empty');
-};
-
-function checkGameOver( coordinates ) {
-  if( game.checkForWins(coordinates) ) {
-    addPlayerWin();
-    winAnimation(game.currentPlayer);
-  } else if (game.turns >= 9) {
-    game.giveTie();
-    tieAnimation();
-  } else {
-    getNextPlayer();
-    setButtonStatus();
-    tryAITurnLoop();
-  }
-};
-
-function addPlayerWin() {
-  game.giveWin();
-  updatePlayerWinsDisplay();
-};
-
-function forfeit(showAnimation) {
-  game.switchCurrentPlayer();
-  addPlayerWin();
-  if (showAnimation) {
-    winAnimation(game.currentPlayer);
-    window.setTimeout(winAnimationReset, 2400);
-  } else {
-    clearBoard();
-  }
-};
-
-function clearScores() {
-  for (var player of [game.p1, game.p2] ) {
-    player.eraseWins();
-  };
-  updatePlayerWinsDisplay();
 };
 
 function winAnimation(winner) {
@@ -302,7 +315,7 @@ function winAnimationReset() {
 function tieAnimation() {
   disableDuringAnimation();
   exclaim.innerText = `tie.`;
-  exclaim.classList.remove('js-bg', 'ruby-bg', 'js-font', 'ruby-font');
+  exclaim.classList.remove(game.p2.bgClass, game.p1.bgClass, game.p2.fontClass, game.p1.fontClass);
   exclaim.classList.add('show-exclaim', 'draw');
   window.setTimeout(tieAnimationReset, 1200);
 };
@@ -310,11 +323,6 @@ function tieAnimation() {
 function tieAnimationReset() {
   exclaim.classList.remove('show-exclaim', 'draw');
   clearBoard();
-};
-
-function getNextPlayer() {
-  game.switchCurrentPlayer();
-  nextPlayerIcon.src = game.currentPlayer.icon;
 };
 
 function setButtonStatus() {
