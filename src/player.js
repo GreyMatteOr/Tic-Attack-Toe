@@ -54,7 +54,7 @@ class Player{
     });
   };
 
-  eraseWins() {
+  eraseStats() {
     this.wins = 0;
     this.ties = 0;
     this.games = 0;

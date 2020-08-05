@@ -124,7 +124,7 @@ function checkGameOver( coordinates ) {
   }
 };
 
-function toggleAutoAI(){
+function toggleAutoAI(event){
   var isLeft = event.target.closest('section').dataset.side === 'left';
   ( (isLeft) ? game.p1 : game.p2 ).toggleAutoRun();
   event.target.innerText = ( event.target.innerText === 'manual' ) ? 'run=auto' : 'manual';
@@ -254,7 +254,7 @@ function getNextPlayer() {
 
 function clearScores() {
   for (var player of [game.p1, game.p2] ) {
-    player.eraseWins();
+    player.eraseStats();
   };
   updatePlayerWinsDisplay();
 };
