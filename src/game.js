@@ -96,7 +96,7 @@ class Game{
       adjacentSideTest = this.sideTileBy(playerTile);
     };
     while( adjacentCornerTest && this.getSymbol( adjacentCornerTest ) !== '') {
-      adjacentCornerTest = this.aCornerOnTheSameSideAs( adjacentSideTest );
+      adjacentCornerTest = this.aSameSideCorner( adjacentSideTest );
     };
     return adjacentCornerTest;
   };
@@ -172,18 +172,18 @@ class Game{
       return false;
     };
     if( corners.length === 3 && this.turns == 1) {
-      return this.aCornerOnTheSameSideAs( enemyTile );
+      return this.aSameSideCorner( enemyTile );
     };
     if( !this.hasStarted() ) {
       return this.randomElementFromArray(corners);
     };
     if( corners.length === 4 && !this.isCenter(enemyTile)) {
-      return this.oppositeCornerTile( this.aCornerOnTheSameSideAs(enemyTile) )
+      return this.oppositeCornerTile( this.aSameSideCorner(enemyTile) )
     };
-    return (!this.isCenter(enemyTile)) ? this.aCornerOnTheSameSideAs(playerTile) : this.randomElementFromArray( corners );
+    return (!this.isCenter(enemyTile)) ? this.aSameSideCorner(playerTile) : this.randomElementFromArray( corners );
   };
 
-  aCornerOnTheSameSideAs ( coordinates ) {
+  aSameSideCorner ( coordinates ) {
     var corners = [];
     if ( ( coordinates[0] === 0 ) ||
          ( coordinates[0] === this.board.length - 1 ) ) {

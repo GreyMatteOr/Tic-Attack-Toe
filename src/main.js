@@ -129,6 +129,7 @@ function toggleAutoAI(){
   ( (isLeft) ? game.p1 : game.p2 ).toggleAutoRun();
   event.target.innerText = ( event.target.innerText === 'manual' ) ? 'run=auto' : 'manual';
   tryAITurnLoop();
+  ifNotAutoDisplayStep();
 }
 
 function ifAIButtonCreateGame(event){
