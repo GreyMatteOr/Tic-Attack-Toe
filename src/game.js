@@ -15,9 +15,8 @@ class Game{
   };
 
   getSymbol( coordinates ) {
-    if (
-     this.board[ coordinates[0] ] === undefined ||
-     this.board[ coordinates[0] ][ coordinates[1] ] === undefined) {
+    if ( this.board[ coordinates[0] ] === undefined ||
+         this.board[ coordinates[0] ][ coordinates[1] ] === undefined) {
       return false;
     };
     return this.board[ coordinates[0] ][ coordinates[1] ];
@@ -81,7 +80,12 @@ class Game{
   };
 
   winOrCornerStratOrTie() {
-    return this.findWinningMove() || this.preventCornerStrat() || this.preventPin() || this.preventCross() || this.cornerStrat() || this.randomOpenTile();
+    return this.findWinningMove() ||
+           this.preventCornerStrat() ||
+           this.preventPin() ||
+           this.preventCross() ||
+           this.cornerStrat() ||
+           this.randomOpenTile();
   };
 
   preventCross() {
@@ -117,8 +121,8 @@ class Game{
     var enemyTile = this.findSpaceThatMatches( this.currentPlayer.opponent.symbol );
     var tileOpposite = this.oppositeCornerTile(enemyTile);
     if ( this.turns === 3 &&
-     this.isACorner( enemyTile ) &&
-     this.getSymbol( tileOpposite ) === this.currentPlayer.opponent.symbol ) {
+         this.isACorner( enemyTile ) &&
+         this.getSymbol( tileOpposite ) === this.currentPlayer.opponent.symbol ) {
       return this.sideTileBy(enemyTile);
     };
     return false;
@@ -168,20 +172,55 @@ class Game{
       [2,2]
     ];
     this.removeFilledTiles(corners);
-    if( corners.length <= 0) {
-      return false;
+    if( corners.length > 0) {
+      return this.firstPickSameSideCorner( corners, enemyTile ) ||
+             this.pickAnyCornerIfStart( corners ) ||
+             this.ifEnemySideGoOpposite(corners, enemyTile) ||
+             this.sameSideOrRandom(enemyTile, playerTile)
     };
-    if( corners.length === 3 && this.turns == 1) {
+    return false;
+  };
+
+  firstPickSameSideCorner( corners, enemyTile ) {
+    if(corners.length === 3 && this.turns == 1) {
       return this.aSameSideCorner( enemyTile );
-    };
+    }
+    return false;
+  };
+
+  pickAnyCornerIfStart( corners ) {
     if( !this.hasStarted() ) {
       return this.randomElementFromArray(corners);
     };
-    if( corners.length === 4 && !this.isCenter(enemyTile)) {
+    return false;
+  };
+
+  ifEnemySideGoOpposite( corners, enemyTile ){
+    if( !this.isCenter(enemyTile) && corners.length === 4 ) {
       return this.oppositeCornerTile( this.aSameSideCorner(enemyTile) )
     };
-    return (!this.isCenter(enemyTile)) ? this.aSameSideCorner(playerTile) : this.randomElementFromArray( corners );
+    return false;
   };
+
+  sameSideOrRandom(enemyTile, playerTile){
+      return this.aSameSideCorner(playerTile) ||
+      this.randomElementFromArray( corners );
+
+  };
+
+  aSameSideCorner ( coordinates ) {
+    var corners = [];
+    if ( ( coordinates[0] === 0 ) ||
+         ( coordinates[0] === this.board.length - 1 ) ) {
+      corners.push([ coordinates[0], 0 ]), corners.push([ coordinates[0], 2 ]);
+    };
+    if ( ( coordinates[1] === 0) ||
+         ( coordinates[1] === this.board[ 0 ].length - 1 ) ) {
+      corners.push([ 0, coordinates[1] ]), corners.push([ 2, coordinates[1] ]);
+    };
+    return this.randomElementFromArray( this.removeFilledTiles( corners ) );
+  };
+
 
   aSameSideCorner ( coordinates ) {
     var corners = [];
@@ -203,6 +242,7 @@ class Game{
         i--;
       };
     };
+    return tileArray;
   };
 
   findSpaceThatMatches( symbol, board ) {
