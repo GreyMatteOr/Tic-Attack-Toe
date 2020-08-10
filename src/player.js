@@ -1,5 +1,5 @@
 class Player{
-  constructor(styleObj, dataObj) {
+  constructor(dataObj, styleObj) {
     this.symbol = styleObj.symbol;
     this.icon = styleObj.icon;
     this.bgClass = styleObj.bgClass;

@@ -101,7 +101,7 @@ function takeAITurn(){
     var behavior = {
       'ez': 'randomOpenTile',
       'med': 'winOrRandom',
-      'hard': 'winOrCornerStratOrTie'
+      'hard': 'hardAI'
     }
     var coordinates = game[ behavior[game.currentPlayer.type] ]();
     game.takeTurn( coordinates );
@@ -165,10 +165,10 @@ function ifEnterAttemptChangeName(event) {
 
 function tryName(event){
   var isLeft = event.target.closest('section').dataset.side === 'left';
-  attempChangeName(isLeft, event);
+  attemptChangeName(isLeft, event);
 }
 
-function attempChangeName(isLeft, event){
+function attemptChangeName(isLeft, event){
   var userText = ( isLeft ) ? p1NameInput.value : p2NameInput.value;
   if ( isNotTooLong(isLeft, userText ) && notCurrentlyInUse(isLeft, userText ) ) {
     changeName(userText, isLeft, event);
@@ -178,8 +178,9 @@ function attempChangeName(isLeft, event){
 function changeName(userText, isLeft, event){
   game.p1.name = (isLeft) ? userText : game.p1.name;
   game.p2.name = (isLeft) ? game.p2.name : userText;
+  game[(isLeft ? 'p1' : 'p2')].type = 'human';
   updatePlayerWinsDisplay();
-  toggleForm(event);
+  setButtonStatus();
 }
 
 function notCurrentlyInUse(isLeft, name) {
