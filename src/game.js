@@ -5,8 +5,8 @@ class Game{
       ['','',''],
       ['','','']
     ];
-    this.p1 = new Player(p1StyleObj, p1Obj);
-    this.p2 = new Player(p2StyleObj, p2Obj);
+    this.p1 = new Player(p1Obj, p1StyleObj);
+    this.p2 = new Player(p2Obj, p2StyleObj);
     this.p1.opponent = this.p2;
     this.p2.opponent = this.p1;
     this.currentPlayer = this.randomElementFromArray( [this.p1, this.p2] );
@@ -24,7 +24,7 @@ class Game{
 
   randomElementFromArray(array) {
     var randomIndex =  Math.floor( Math.random() * array.length );
-    return array[randomIndex];
+    return (array.length > 0) ? array[randomIndex] : false;
   };
 
   hasStarted() {
@@ -32,7 +32,7 @@ class Game{
   };
 
   tileIsEmpty(coordinates) {
-    if ( this.board[ coordinates[0] ][ coordinates[1] ] === '' ) {
+    if ( this.getSymbol(coordinates) === '' ) {
       return true;
     };
     return false;
@@ -79,55 +79,6 @@ class Game{
     this.currentPlayer = this.currentPlayer.opponent;
   };
 
-  winOrCornerStratOrTie() {
-    return this.findWinningMove() ||
-           this.preventCornerStrat() ||
-           this.preventPin() ||
-           this.preventCross() ||
-           this.cornerStrat() ||
-           this.randomOpenTile();
-  };
-
-  preventCross() {
-    var enemyTile = this.findSpaceThatMatches( this.currentPlayer.opponent.symbol );
-    var playerTile = this.findSpaceThatMatches( this.currentPlayer.symbol );
-    var adjacentSideTest = enemyTile;
-    var adjacentCornerTest = playerTile;
-    if( this.turns !== 3 || !this.isASide( enemyTile ) ) {
-      return false
-    };
-    while( adjacentSideTest && this.getSymbol( adjacentSideTest ) !== '') {
-      adjacentSideTest = this.sideTileBy(playerTile);
-    };
-    while( adjacentCornerTest && this.getSymbol( adjacentCornerTest ) !== '') {
-      adjacentCornerTest = this.aSameSideCorner( adjacentSideTest );
-    };
-    return adjacentCornerTest;
-  };
-
-  preventCornerStrat() {
-    if ( this.turns === 1 &&
-         this.isACorner( this.findSpaceThatMatches( this.currentPlayer.opponent.symbol ) ) ) {
-      return [1,1];
-    };
-
-    return false;
-  };
-
-  preventPin() {
-    if( !game.hasStarted() ) {
-      return false;
-    };
-    var enemyTile = this.findSpaceThatMatches( this.currentPlayer.opponent.symbol );
-    var tileOpposite = this.oppositeCornerTile(enemyTile);
-    if ( this.turns === 3 &&
-         this.isACorner( enemyTile ) &&
-         this.getSymbol( tileOpposite ) === this.currentPlayer.opponent.symbol ) {
-      return this.sideTileBy(enemyTile);
-    };
-    return false;
-  };
-
   oppositeCornerTile( coordinates ) {
     var height = this.board.length - 1 ;
     var width = this.board[coordinates[0]].length - 1;
@@ -135,7 +86,7 @@ class Game{
     var col = coordinates[1];
     row += (coordinates[0] === 0) ? width : (-width);
     col += (coordinates[1] === 0) ? height : (-height)
-    return [row, col];
+    return (this.getSymbol([row, col]) !== false) ? [row, col] : false;
   };
 
   sideTileBy( coordinates ) {
@@ -147,6 +98,15 @@ class Game{
                          [ coordinates[0], coordinates[1] - 1 ];
     return this.randomElementFromArray( [belowOrAbove, leftOrRight] )
   };
+
+  adjacentCornerBy( coordinates ) {
+    var possibleTiles = [];
+    (coordinates[0] === 1) ?
+      (possibleTiles.push([ coordinates[0] + 1, coordinates[1] ]), possibleTiles.push([ coordinates[0] - 1, coordinates[1] ])) : '';
+    (coordinates[1] === 1) ?
+      (possibleTiles.push([ coordinates[0], coordinates[1] + 1]), possibleTiles.push([ coordinates[0], coordinates[1] - 1 ])) : '';
+    return this.randomElementFromArray( possibleTiles )
+  }
 
   isASide(coordinates) {
     return !this.isACorner(coordinates) && !this.isCenter(coordinates);
@@ -162,9 +122,7 @@ class Game{
     return topOrBot && leftOrRight;
   };
 
-  cornerStrat() {
-    var playerTile = this.findSpaceThatMatches( this.currentPlayer.symbol );
-    var enemyTile = this.findSpaceThatMatches( this.currentPlayer.opponent.symbol );
+  randomOpenCorner(){
     var corners = [
       [0,0],
       [2,0],
@@ -172,68 +130,77 @@ class Game{
       [2,2]
     ];
     this.removeFilledTiles(corners);
-    if( corners.length > 0) {
-      return this.firstPickSameSideCorner( corners, enemyTile ) ||
-             this.pickAnyCornerIfStart( corners ) ||
-             this.ifEnemySideGoOpposite(corners, enemyTile) ||
-             this.sameSideOrRandom(enemyTile, playerTile)
-    };
-    return false;
-  };
+    return (corners.length > 0) ? this.randomElementFromArray(corners) : false;
+  }
 
-  firstPickSameSideCorner( corners, enemyTile ) {
-    if(corners.length === 3 && this.turns == 1) {
-      return this.aSameSideCorner( enemyTile );
+  hardAI() {
+    return this.findWinningMove() ||
+           this.preventEnemyCornerStrat() ||
+           this.preventEnemySideStrat() ||
+           this.tryPin() ||
+           this.preventCornerPin() ||
+           this.preventSidePin() ||
+           this.cornerOnOpenSide() ||
+           this.randomOpenCorner() ||
+           this.randomOpenTile()
+  }
+
+  preventEnemyCornerStrat() {
+    const enemyTile = this.findSpaceThatMatches(this.currentPlayer.opponent.symbol);
+    if (this.turns === 1 && this.isACorner(enemyTile)) {
+      return [1, 1];
     }
     return false;
-  };
+  }
 
-  pickAnyCornerIfStart( corners ) {
-    if( !this.hasStarted() ) {
-      return this.randomElementFromArray(corners);
-    };
+  preventEnemySideStrat() {
+    const enemyTile = this.findSpaceThatMatches(this.currentPlayer.opponent.symbol);
+    if (this.turns === 1 && this.isASide(enemyTile)) {
+      return this.adjacentCornerBy(enemyTile);
+    }
     return false;
-  };
+  }
 
-  ifEnemySideGoOpposite( corners, enemyTile ){
-    if( !this.isCenter(enemyTile) && corners.length === 4 ) {
-      return this.oppositeCornerTile( this.aSameSideCorner(enemyTile) )
-    };
+  tryPin() {
+    const enemyTile = this.findSpaceThatMatches(this.currentPlayer.opponent.symbol);
+    if (this.turns === 2 && this.isCenter(enemyTile)) {
+      var playerTile = this.findSpaceThatMatches(this.currentPlayer.symbol);
+      return this.oppositeCornerTile(playerTile);
+    }
     return false;
-  };
+  }
 
-  sameSideOrRandom(enemyTile, playerTile){
-      return this.aSameSideCorner(playerTile) ||
-      this.randomElementFromArray( corners );
+  preventCornerPin() {
+    const enemyTile = this.findSpaceThatMatches(this.currentPlayer.opponent.symbol);
+    if (this.turns === 3 && this.isACorner(enemyTile)) {
+      return this.sideTileBy(enemyTile);
+    }
+    return false;
+  }
 
-  };
+  preventSidePin() {
+    const enemyTile = this.findSpaceThatMatches(this.currentPlayer.opponent.symbol);
+    if ((this.turns === 3 || this.turns === 4) && this.isASide(enemyTile)) {
+      var copyBoard = this.board.concat();
+      copyBoard[enemyTile[0]][enemyTile[1]] == '';
+      const enemyTile2 = this.findSpaceThatMatches(this.currentPlayer.opponent.symbol, copyBoard);
+      return (this.isASide(enemyTile2)) ? [1,1] : false;
+    }
+    return false;
+  }
 
-  aSameSideCorner ( coordinates ) {
-    var corners = [];
-    if ( ( coordinates[0] === 0 ) ||
-         ( coordinates[0] === this.board.length - 1 ) ) {
-      corners.push([ coordinates[0], 0 ]), corners.push([ coordinates[0], 2 ]);
-    };
-    if ( ( coordinates[1] === 0) ||
-         ( coordinates[1] === this.board[ 0 ].length - 1 ) ) {
-      corners.push([ 0, coordinates[1] ]), corners.push([ 2, coordinates[1] ]);
-    };
-    return this.randomElementFromArray( this.removeFilledTiles( corners ) );
-  };
-
-
-  aSameSideCorner ( coordinates ) {
-    var corners = [];
-    if ( ( coordinates[0] === 0 ) ||
-         ( coordinates[0] === this.board.length - 1 ) ) {
-      corners.push([ coordinates[0], 0 ]), corners.push([ coordinates[0], 2 ]);
-    };
-    if ( ( coordinates[1] === 0) ||
-         ( coordinates[1] === this.board[ coordinates[0] ].length - 1 ) ) {
-      corners.push([ 0, coordinates[1] ]), corners.push([ 2, coordinates[1] ]);
-    };
-    return this.randomElementFromArray( this.removeFilledTiles( corners ) );
-  };
+  cornerOnOpenSide() {
+    var corners = [
+      [0,0],
+      [2,0],
+      [0,2],
+      [2,2]
+    ];
+    this.removeFilledTiles(corners);
+    this.removeTilesAdjacentToEnemy(corners);
+    this.removeCornersOppositeMe(corners);
+    return this.randomElementFromArray(corners);
+  }
 
   removeFilledTiles( tileArray ) {
     for (var i = 0; i < tileArray.length; i++) {
@@ -245,6 +212,37 @@ class Game{
     return tileArray;
   };
 
+  removeTilesAdjacentToEnemy( tileArray ) {
+    for (var i = 0; i < tileArray.length; i++) {
+      if ( this.isAdjacentToEnemy( tileArray[i] ) ) {
+        tileArray.splice( i, 1 )
+        i--;
+      };
+    };
+    return tileArray;
+  }
+
+  removeCornersOppositeMe( tileArray ) {
+    for (var i = 0; i < tileArray.length; i++) {
+      if ( this.getSymbol(this.oppositeCornerTile( tileArray[i] ) ) === this.currentPlayer.symbol ) {
+        tileArray.splice( i, 1 )
+        i--;
+      };
+    };
+    return tileArray;
+  }
+
+  isAdjacentToEnemy( coordinates ) {
+    var adjacentTiles = [
+      [coordinates[0] - 1, coordinates[1]],
+      [coordinates[0] + 1, coordinates[1]],
+      [coordinates[0], coordinates[1] - 1],
+      [coordinates[0], coordinates[1] + 1]
+    ]
+    adjacentTiles = adjacentTiles.map((tile) => this.getSymbol(tile));
+    return adjacentTiles.includes(this.currentPlayer.opponent.symbol);
+  }
+
   findSpaceThatMatches( symbol, board ) {
     var arrayToSearch = board || this.board;
     for( var row = 0; row < arrayToSearch.length; row++ ) {
@@ -254,6 +252,7 @@ class Game{
         };
       };
     };
+    return false;
   };
 
   winOrRandom() {
