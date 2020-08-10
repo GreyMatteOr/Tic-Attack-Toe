@@ -399,3 +399,18 @@ h1 img{
 .medium-font-size{
   font-size: 1.5em;
 }
+
+@media screen and (max-width: 430px){
+  main {
+    grid-template-rows: 100px 1fr 100px;
+    grid-template-columns: 1fr;
+  }
+
+  #section-left, #section-right {
+    padding: .5em 1em;
+    margin: 0;
+    font-size: 15px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+}
